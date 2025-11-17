@@ -1,7 +1,175 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'firebase_options.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
+}
+
+class AuthService {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  // Obtener usuario actual
+  User? get currentUser => _auth.currentUser;
+
+  // Stream para detectar cambios en la autenticación
+  Stream<User?> get authStateChanges => _auth.authStateChanges();
+
+  // Registrar nuevo usuario
+  Future<Map<String, dynamic>> registrarUsuario({
+    required String nombre,
+    required String usuario,
+    required String correo,
+    required String telefono,
+    required String direccion,
+    required String horario,
+    required String tipoUsuario,
+    required String password,
+  }) async {
+    try {
+      // Crear usuario en Firebase Authentication
+      UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
+        email: correo,
+        password: password,
+      );
+
+      String uid = userCredential.user!.uid;
+
+      // Guardar datos adicionales en Firestore
+      await _firestore.collection('usuarios').doc(uid).set({
+        'uid': uid,
+        'nombre': nombre,
+        'usuario': usuario,
+        'correo': correo,
+        'telefono': telefono,
+        'direccion': direccion,
+        'horario': horario,
+        'tipoUsuario': tipoUsuario,
+        'fechaRegistro': FieldValue.serverTimestamp(),
+        'actividadesCompletadas': [],
+        'huertosRegistrados': [],
+      });
+
+      return {
+        'success': true,
+        'message': '¡Registro exitoso como $tipoUsuario!',
+        'uid': uid,
+      };
+    } on FirebaseAuthException catch (e) {
+      String mensaje = 'Error en el registro';
+      
+      if (e.code == 'weak-password') {
+        mensaje = 'La contraseña es muy débil';
+      } else if (e.code == 'email-already-in-use') {
+        mensaje = 'Este correo ya está registrado';
+      } else if (e.code == 'invalid-email') {
+        mensaje = 'El correo no es válido';
+      }
+      
+      return {
+        'success': false,
+        'message': mensaje,
+      };
+    } catch (e) {
+      return {
+        'success': false,
+        'message': 'Error: ${e.toString()}',
+      };
+    }
+  }
+
+  // Iniciar sesión
+  Future<Map<String, dynamic>> iniciarSesion({
+    required String correo,
+    required String password,
+  }) async {
+    try {
+      UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+        email: correo,
+        password: password,
+      );
+
+      // Obtener datos del usuario de Firestore
+      DocumentSnapshot userDoc = await _firestore
+          .collection('usuarios')
+          .doc(userCredential.user!.uid)
+          .get();
+
+      if (userDoc.exists) {
+        Map<String, dynamic> userData = userDoc.data() as Map<String, dynamic>;
+        
+        return {
+          'success': true,
+          'message': '¡Bienvenido, ${userData['nombre']}!',
+          'userData': userData,
+        };
+      } else {
+        return {
+          'success': false,
+          'message': 'Usuario no encontrado',
+        };
+      }
+    } on FirebaseAuthException catch (e) {
+      String mensaje = 'Error al iniciar sesión';
+      
+      if (e.code == 'user-not-found') {
+        mensaje = 'Usuario no encontrado';
+      } else if (e.code == 'wrong-password') {
+        mensaje = 'Contraseña incorrecta';
+      } else if (e.code == 'invalid-email') {
+        mensaje = 'Correo no válido';
+      } else if (e.code == 'user-disabled') {
+        mensaje = 'Este usuario ha sido deshabilitado';
+      }
+      
+      return {
+        'success': false,
+        'message': mensaje,
+      };
+    } catch (e) {
+      return {
+        'success': false,
+        'message': 'Error: ${e.toString()}',
+      };
+    }
+  }
+
+  // Cerrar sesión
+  Future<void> cerrarSesion() async {
+    await _auth.signOut();
+  }
+
+  // Obtener datos del usuario actual
+  Future<Map<String, dynamic>?> obtenerDatosUsuario() async {
+    try {
+      if (currentUser != null) {
+        DocumentSnapshot userDoc = await _firestore
+            .collection('usuarios')
+            .doc(currentUser!.uid)
+            .get();
+
+        if (userDoc.exists) {
+          return userDoc.data() as Map<String, dynamic>;
+        }
+      }
+      return null;
+    } catch (e) {
+      print('Error al obtener datos del usuario: $e');
+      return null;
+    }
+  }
+
+  // Verificar si hay un usuario logueado
+  bool estaLogueado() {
+    return currentUser != null;
+  }
 }
 
 class MyApp extends StatelessWidget {
