@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "406048299780",
+    "project_id": "greenhand-app-43162",
+    "storage_bucket": "greenhand-app-43162.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:406048299780:android:322a46d6fde2fdbc4b8e51",
+        "android_client_info": {
+          "package_name": "com.example.rubrica_3_flutter"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC2ZmDSf_-AklRIqvFqpu2c-0Ip3FZ7nIQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
