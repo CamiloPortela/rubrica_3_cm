@@ -1028,6 +1028,89 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 }
 
+// Agregar estas clases ANTES de la clase HomeScreen (después de RegisterScreen)
+
+// Pantalla Placeholder para Estadísticas
+class EstadisticasScreen extends StatelessWidget {
+  const EstadisticasScreen({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.green.shade700,
+        title: const Text(
+          'Estadísticas',
+          style: TextStyle(color: Colors.white),
+        ),
+        iconTheme: const IconThemeData(color: Colors.white),
+      ),
+      body: const Center(
+        child: Text('Pantalla de Estadísticas - En construcción'),
+      ),
+    );
+  }
+}
+
+// Pantalla Placeholder para Educación
+class EducacionScreen extends StatelessWidget {
+  const EducacionScreen({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.green.shade700,
+        title: const Text('Educación', style: TextStyle(color: Colors.white)),
+        iconTheme: const IconThemeData(color: Colors.white),
+      ),
+      body: const Center(
+        child: Text('Pantalla de Educación - En construcción'),
+      ),
+    );
+  }
+}
+
+// Pantalla Placeholder para Perfil
+class PerfilScreen extends StatelessWidget {
+  final Map<String, dynamic> userData;
+
+  const PerfilScreen({Key? key, required this.userData}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.green.shade700,
+        title: const Text('Perfil', style: TextStyle(color: Colors.white)),
+        iconTheme: const IconThemeData(color: Colors.white),
+      ),
+      body: Center(child: Text('Pantalla de Perfil - ${userData['nombre']}')),
+    );
+  }
+}
+
+// Pantalla Placeholder para Huertos
+class HuertosScreen extends StatelessWidget {
+  final Map<String, dynamic> userData;
+
+  const HuertosScreen({Key? key, required this.userData}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    String tipoUsuario = userData['tipoUsuario'] ?? 'Voluntario';
+
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.green.shade700,
+        title: const Text('Huertos', style: TextStyle(color: Colors.white)),
+        iconTheme: const IconThemeData(color: Colors.white),
+      ),
+      body: Center(child: Text('Pantalla de Huertos - $tipoUsuario')),
+    );
+  }
+}
+
 class HomeScreen extends StatefulWidget {
   final Map<String, dynamic> userData;
 
@@ -1038,6 +1121,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final AuthService _authService = AuthService();
+
   @override
   Widget build(BuildContext context) {
     String nombreUsuario = widget.userData['nombre'] ?? 'Usuario';
@@ -1048,12 +1133,13 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         backgroundColor: Colors.green.shade700,
         elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.menu, color: Colors.white),
-          onPressed: () {
-            // TODO: Abrir drawer (menú lateral)
-            print('Abrir menú lateral');
-          },
+        leading: Builder(
+          builder: (context) => IconButton(
+            icon: const Icon(Icons.menu, color: Colors.white),
+            onPressed: () {
+              Scaffold.of(context).openDrawer();
+            },
+          ),
         ),
         title: const Text(
           'Greenhand App',
@@ -1063,11 +1149,200 @@ class _HomeScreenState extends State<HomeScreen> {
           IconButton(
             icon: const Icon(Icons.person, color: Colors.white),
             onPressed: () {
-              // TODO: Navegar a perfil
-              print('Ir a perfil');
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => PerfilScreen(userData: widget.userData),
+                ),
+              );
             },
           ),
         ],
+      ),
+      // DRAWER AGREGADO AQUÍ
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            // Header del Drawer
+            DrawerHeader(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Colors.green.shade700, Colors.green.shade500],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircleAvatar(
+                    radius: 30,
+                    backgroundColor: Colors.white,
+                    child: Icon(
+                      Icons.person,
+                      size: 35,
+                      color: Colors.green.shade700,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    nombreUsuario,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 4),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 3,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.3),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      tipoUsuario,
+                      style: const TextStyle(color: Colors.white, fontSize: 11),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // Opción Inicio
+            ListTile(
+              leading: const Icon(Icons.home, color: Colors.green),
+              title: const Text('Inicio'),
+              onTap: () {
+                Navigator.pop(context); // Cierra el drawer
+              },
+            ),
+
+            // Opción Huertos (ADAPTADA SEGÚN TIPO DE USUARIO)
+            ListTile(
+              leading: const Icon(Icons.eco, color: Colors.green),
+              title: Text(
+                tipoUsuario == 'Administrador' ? 'Mis Huertos' : 'Huertos',
+              ),
+              subtitle: Text(
+                tipoUsuario == 'Administrador'
+                    ? 'Gestiona tus huertos'
+                    : 'Busca y únete',
+                style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
+              ),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        HuertosScreen(userData: widget.userData),
+                  ),
+                );
+              },
+            ),
+
+            // Opción Estadísticas
+            ListTile(
+              leading: const Icon(Icons.bar_chart, color: Colors.green),
+              title: const Text('Estadísticas'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const EstadisticasScreen(),
+                  ),
+                );
+              },
+            ),
+
+            // Opción Educación
+            ListTile(
+              leading: const Icon(Icons.school, color: Colors.green),
+              title: const Text('Educación'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const EducacionScreen(),
+                  ),
+                );
+              },
+            ),
+
+            // Opción Perfil
+            ListTile(
+              leading: const Icon(Icons.person, color: Colors.green),
+              title: const Text('Perfil'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        PerfilScreen(userData: widget.userData),
+                  ),
+                );
+              },
+            ),
+
+            const Divider(),
+
+            // Opción Cerrar Sesión
+            ListTile(
+              leading: const Icon(Icons.exit_to_app, color: Colors.red),
+              title: const Text(
+                'Cerrar Sesión',
+                style: TextStyle(color: Colors.red),
+              ),
+              onTap: () async {
+                // Mostrar diálogo de confirmación
+                bool? confirmar = await showDialog<bool>(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: const Text('Cerrar Sesión'),
+                    content: const Text(
+                      '¿Estás seguro que deseas cerrar sesión?',
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context, false),
+                        child: const Text('Cancelar'),
+                      ),
+                      TextButton(
+                        onPressed: () => Navigator.pop(context, true),
+                        child: const Text(
+                          'Cerrar Sesión',
+                          style: TextStyle(color: Colors.red),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+
+                if (confirmar == true) {
+                  await _authService.cerrarSesion();
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const WelcomeScreen(),
+                    ),
+                    (route) => false,
+                  );
+                }
+              },
+            ),
+          ],
+        ),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -1167,27 +1442,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 Colors.purple,
               ),
               const SizedBox(height: 30),
-
-              // Mensaje cuando no hay actividades (oculto por ahora)
-              // Center(
-              //   child: Column(
-              //     children: [
-              //       Icon(
-              //         Icons.check_circle_outline,
-              //         size: 80,
-              //         color: Colors.grey.shade400,
-              //       ),
-              //       const SizedBox(height: 16),
-              //       Text(
-              //         'No tienes actividades pendientes',
-              //         style: TextStyle(
-              //           fontSize: 16,
-              //           color: Colors.grey.shade600,
-              //         ),
-              //       ),
-              //     ],
-              //   ),
-              // ),
             ],
           ),
         ),
