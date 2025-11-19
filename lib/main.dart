@@ -6,9 +6,7 @@ import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(const MyApp());
 }
 
@@ -35,10 +33,8 @@ class AuthService {
   }) async {
     try {
       // Crear usuario en Firebase Authentication
-      UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
-        email: correo,
-        password: password,
-      );
+      UserCredential userCredential = await _auth
+          .createUserWithEmailAndPassword(email: correo, password: password);
 
       String uid = userCredential.user!.uid;
 
@@ -64,7 +60,7 @@ class AuthService {
       };
     } on FirebaseAuthException catch (e) {
       String mensaje = 'Error en el registro';
-      
+
       if (e.code == 'weak-password') {
         mensaje = 'La contraseña es muy débil';
       } else if (e.code == 'email-already-in-use') {
@@ -72,16 +68,10 @@ class AuthService {
       } else if (e.code == 'invalid-email') {
         mensaje = 'El correo no es válido';
       }
-      
-      return {
-        'success': false,
-        'message': mensaje,
-      };
+
+      return {'success': false, 'message': mensaje};
     } catch (e) {
-      return {
-        'success': false,
-        'message': 'Error: ${e.toString()}',
-      };
+      return {'success': false, 'message': 'Error: ${e.toString()}'};
     }
   }
 
@@ -104,21 +94,18 @@ class AuthService {
 
       if (userDoc.exists) {
         Map<String, dynamic> userData = userDoc.data() as Map<String, dynamic>;
-        
+
         return {
           'success': true,
           'message': '¡Bienvenido, ${userData['nombre']}!',
           'userData': userData,
         };
       } else {
-        return {
-          'success': false,
-          'message': 'Usuario no encontrado',
-        };
+        return {'success': false, 'message': 'Usuario no encontrado'};
       }
     } on FirebaseAuthException catch (e) {
       String mensaje = 'Error al iniciar sesión';
-      
+
       if (e.code == 'user-not-found') {
         mensaje = 'Usuario no encontrado';
       } else if (e.code == 'wrong-password') {
@@ -128,16 +115,10 @@ class AuthService {
       } else if (e.code == 'user-disabled') {
         mensaje = 'Este usuario ha sido deshabilitado';
       }
-      
-      return {
-        'success': false,
-        'message': mensaje,
-      };
+
+      return {'success': false, 'message': mensaje};
     } catch (e) {
-      return {
-        'success': false,
-        'message': 'Error: ${e.toString()}',
-      };
+      return {'success': false, 'message': 'Error: ${e.toString()}'};
     }
   }
 
@@ -315,10 +296,7 @@ class WelcomeScreen extends StatelessWidget {
               // Versión de la app (opcional)
               Text(
                 'Versión 1.0.0',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey.shade400,
-                ),
+                style: TextStyle(fontSize: 12, color: Colors.grey.shade400),
               ),
               const SizedBox(height: 8),
             ],
@@ -338,7 +316,8 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final AuthService _authService = AuthService(); // NUEVO
-  final correoController = TextEditingController(); // CAMBIADO de userController
+  final correoController =
+      TextEditingController(); // CAMBIADO de userController
   final passwordController = TextEditingController();
   bool _isPasswordVisible = false;
   bool _isLoading = false; // NUEVO
@@ -395,18 +374,13 @@ class _LoginScreenState extends State<LoginScreen> {
 
     // Mostrar resultado
     if (resultado['success']) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(resultado['message']),
-          backgroundColor: Colors.green,
-          duration: const Duration(seconds: 2),
+      // Navegar a la pantalla principal
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => HomeScreen(userData: resultado['userData']),
         ),
       );
-
-      // TODO: Aquí navegaremos a la pantalla principal según el tipo de usuario
-      // Por ahora solo mostramos el mensaje
-      print('Usuario logueado: ${resultado['userData']['nombre']}');
-      print('Tipo de usuario: ${resultado['userData']['tipoUsuario']}');
     } else {
       print('Error en login: ${resultado['message']}');
       ScaffoldMessenger.of(context).showSnackBar(
@@ -485,7 +459,10 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: Colors.green.shade700, width: 2),
+                      borderSide: BorderSide(
+                        color: Colors.green.shade700,
+                        width: 2,
+                      ),
                     ),
                   ),
                 ),
@@ -502,9 +479,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     prefixIcon: const Icon(Icons.lock),
                     suffixIcon: IconButton(
                       icon: Icon(
-                        _isPasswordVisible 
-                          ? Icons.visibility 
-                          : Icons.visibility_off,
+                        _isPasswordVisible
+                            ? Icons.visibility
+                            : Icons.visibility_off,
                         color: Colors.grey,
                       ),
                       onPressed: () {
@@ -518,7 +495,10 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: Colors.green.shade700, width: 2),
+                      borderSide: BorderSide(
+                        color: Colors.green.shade700,
+                        width: 2,
+                      ),
                     ),
                   ),
                 ),
@@ -528,23 +508,25 @@ class _LoginScreenState extends State<LoginScreen> {
                 Align(
                   alignment: Alignment.centerRight,
                   child: TextButton(
-                    onPressed: _isLoading ? null : () {
-                      showDialog(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                          title: const Text('Recuperar Contraseña'),
-                          content: const Text(
-                            'Función de recuperación de contraseña en desarrollo.',
-                          ),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Navigator.pop(context),
-                              child: const Text('OK'),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
+                    onPressed: _isLoading
+                        ? null
+                        : () {
+                            showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: const Text('Recuperar Contraseña'),
+                                content: const Text(
+                                  'Función de recuperación de contraseña en desarrollo.',
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () => Navigator.pop(context),
+                                    child: const Text('OK'),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
                     child: Text(
                       '¿Olvidaste tu contraseña?',
                       style: TextStyle(color: Colors.green.shade700),
@@ -607,14 +589,16 @@ class _LoginScreenState extends State<LoginScreen> {
                 SizedBox(
                   width: double.infinity,
                   child: OutlinedButton(
-                    onPressed: _isLoading ? null : () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const RegisterScreen(),
-                        ),
-                      );
-                    },
+                    onPressed: _isLoading
+                        ? null
+                        : () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const RegisterScreen(),
+                              ),
+                            );
+                          },
                     style: OutlinedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       side: BorderSide(color: Colors.green.shade700, width: 2),
@@ -663,7 +647,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final telefonoController = TextEditingController();
   final direccionController = TextEditingController();
   final passwordController = TextEditingController();
-  
+
   String horarioSeleccionado = '6:00 - 9:00';
   String tipoUsuario = 'Voluntario';
   bool _isLoading = false; // NUEVO - Para mostrar loading
@@ -674,10 +658,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     '14:00 - 17:00',
   ];
 
-  final List<String> tiposUsuario = [
-    'Voluntario',
-    'Administrador',
-  ];
+  final List<String> tiposUsuario = ['Voluntario', 'Administrador'];
 
   //Método para registrar usuario
   Future<void> _registrarUsuario() async {
@@ -754,7 +735,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     } else {
       // Imprimir en consola para debug
       print('Error detallado: ${resultado['message']}');
-      
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(resultado['message']),
@@ -913,11 +894,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       child: Text(horario),
                     );
                   }).toList(),
-                  onChanged: _isLoading ? null : (value) { // NUEVO
-                    setState(() {
-                      horarioSeleccionado = value!;
-                    });
-                  },
+                  onChanged: _isLoading
+                      ? null
+                      : (value) {
+                          // NUEVO
+                          setState(() {
+                            horarioSeleccionado = value!;
+                          });
+                        },
                 ),
                 const SizedBox(height: 16),
 
@@ -937,11 +921,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       child: Text(tipo),
                     );
                   }).toList(),
-                  onChanged: _isLoading ? null : (value) { // NUEVO
-                    setState(() {
-                      tipoUsuario = value!;
-                    });
-                  },
+                  onChanged: _isLoading
+                      ? null
+                      : (value) {
+                          // NUEVO
+                          setState(() {
+                            tipoUsuario = value!;
+                          });
+                        },
                 ),
                 const SizedBox(height: 16),
 
@@ -964,7 +951,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: _isLoading ? null : _registrarUsuario, // MODIFICADO
+                    onPressed: _isLoading
+                        ? null
+                        : _registrarUsuario, // MODIFICADO
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blue.shade700,
                       padding: const EdgeInsets.symmetric(vertical: 16),
@@ -972,7 +961,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    child: _isLoading // NUEVO - Mostrar loading
+                    child:
+                        _isLoading // NUEVO - Mostrar loading
                         ? const SizedBox(
                             height: 20,
                             width: 20,
@@ -1002,9 +992,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       style: TextStyle(color: Colors.grey.shade600),
                     ),
                     TextButton(
-                      onPressed: _isLoading ? null : () { // NUEVO
-                        Navigator.pop(context);
-                      },
+                      onPressed: _isLoading
+                          ? null
+                          : () {
+                              // NUEVO
+                              Navigator.pop(context);
+                            },
                       child: Text(
                         'Inicia Sesión',
                         style: TextStyle(
@@ -1032,5 +1025,230 @@ class _RegisterScreenState extends State<RegisterScreen> {
     direccionController.dispose();
     passwordController.dispose();
     super.dispose();
+  }
+}
+
+class HomeScreen extends StatefulWidget {
+  final Map<String, dynamic> userData;
+
+  const HomeScreen({Key? key, required this.userData}) : super(key: key);
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  @override
+  Widget build(BuildContext context) {
+    String nombreUsuario = widget.userData['nombre'] ?? 'Usuario';
+    String tipoUsuario = widget.userData['tipoUsuario'] ?? 'Voluntario';
+
+    return Scaffold(
+      backgroundColor: Colors.grey.shade50,
+      appBar: AppBar(
+        backgroundColor: Colors.green.shade700,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.menu, color: Colors.white),
+          onPressed: () {
+            // TODO: Abrir drawer (menú lateral)
+            print('Abrir menú lateral');
+          },
+        ),
+        title: const Text(
+          'Greenhand App',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.person, color: Colors.white),
+            onPressed: () {
+              // TODO: Navegar a perfil
+              print('Ir a perfil');
+            },
+          ),
+        ],
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Saludo personalizado
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Colors.green.shade700, Colors.green.shade500],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.green.withOpacity(0.3),
+                      blurRadius: 10,
+                      offset: const Offset(0, 5),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      '¡Hola!',
+                      style: TextStyle(color: Colors.white70, fontSize: 16),
+                    ),
+                    const SizedBox(height: 5),
+                    Text(
+                      nombreUsuario,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 5),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        tipoUsuario,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 30),
+
+              // Título de actividades pendientes
+              const Text(
+                'Actividades Pendientes',
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
+              ),
+              const SizedBox(height: 15),
+
+              // Lista de actividades (placeholder por ahora)
+              _buildActividadPlaceholder(
+                'Riego del Huerto Principal',
+                'Hoy - 10:00 AM',
+                Icons.water_drop,
+                Colors.blue,
+              ),
+              const SizedBox(height: 12),
+              _buildActividadPlaceholder(
+                'Poda de Plantas',
+                'Mañana - 2:00 PM',
+                Icons.content_cut,
+                Colors.orange,
+              ),
+              const SizedBox(height: 12),
+              _buildActividadPlaceholder(
+                'Limpieza General',
+                'Viernes - 9:00 AM',
+                Icons.cleaning_services,
+                Colors.purple,
+              ),
+              const SizedBox(height: 30),
+
+              // Mensaje cuando no hay actividades (oculto por ahora)
+              // Center(
+              //   child: Column(
+              //     children: [
+              //       Icon(
+              //         Icons.check_circle_outline,
+              //         size: 80,
+              //         color: Colors.grey.shade400,
+              //       ),
+              //       const SizedBox(height: 16),
+              //       Text(
+              //         'No tienes actividades pendientes',
+              //         style: TextStyle(
+              //           fontSize: 16,
+              //           color: Colors.grey.shade600,
+              //         ),
+              //       ),
+              //     ],
+              //   ),
+              // ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  // Widget helper para las actividades placeholder
+  Widget _buildActividadPlaceholder(
+    String titulo,
+    String fecha,
+    IconData icono,
+    Color color,
+  ) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            blurRadius: 5,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(icono, color: color, size: 28),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  titulo,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  fecha,
+                  style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
+                ),
+              ],
+            ),
+          ),
+          Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey.shade400),
+        ],
+      ),
+    );
   }
 }
