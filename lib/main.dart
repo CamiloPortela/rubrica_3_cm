@@ -3711,8 +3711,8 @@ class _DetalleActividadScreenState extends State<DetalleActividadScreen> {
         'uid': uid,
         'nombre': nombreUsuario,
         'horasComprometidas': horasNum,
-        'fechaRegistro': FieldValue.serverTimestamp(),
-        'estado': 'pendiente', // pendiente, en_proceso, completada
+        'fechaRegistro': DateTime.now().toIso8601String(), // ← CAMBIADO
+        'estado': 'pendiente',
       };
 
       // Crear registro de actividad para el historial
@@ -7330,6 +7330,164 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final AuthService _authService = AuthService();
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  List<Map<String, dynamic>> _actividadesPendientes = [];
+  bool _isLoadingActividades = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _cargarActividadesPendientes();
+  }
+
+  // Cargar actividades pendientes según tipo de usuario
+  Future<void> _cargarActividadesPendientes() async {
+    setState(() {
+      _isLoadingActividades = true;
+    });
+
+    try {
+      String tipoUsuario = widget.userData['tipoUsuario'] ?? 'Voluntario';
+      String uid = widget.userData['uid'];
+
+      if (tipoUsuario == 'Administrador') {
+        // Cargar actividades de los huertos del admin
+        await _cargarActividadesAdmin(uid);
+      } else {
+        // Cargar actividades del voluntario
+        await _cargarActividadesVoluntario(uid);
+      }
+
+      setState(() {
+        _isLoadingActividades = false;
+      });
+    } catch (e) {
+      print('Error al cargar actividades: $e');
+      setState(() {
+        _isLoadingActividades = false;
+      });
+    }
+  }
+
+  // Cargar actividades para Administrador
+  Future<void> _cargarActividadesAdmin(String uid) async {
+    List<Map<String, dynamic>> actividadesList = [];
+
+    // Obtener huertos del admin
+    QuerySnapshot huertosSnapshot = await _firestore
+        .collection('huertos')
+        .where('creadorId', isEqualTo: uid)
+        .get();
+
+    List<String> huertosIds = huertosSnapshot.docs
+        .map((doc) => doc.id)
+        .toList();
+
+    // Obtener actividades de esos huertos
+    if (huertosIds.isNotEmpty) {
+      QuerySnapshot actividadesSnapshot = await _firestore
+          .collection('actividades')
+          .where('huertoId', whereIn: huertosIds)
+          .where('estado', isEqualTo: 'pendiente')
+          .orderBy('fecha', descending: false)
+          .limit(10)
+          .get();
+
+      for (var doc in actividadesSnapshot.docs) {
+        Map<String, dynamic> actividad = doc.data() as Map<String, dynamic>;
+        actividad['id'] = doc.id;
+
+        // Obtener nombre del huerto
+        String huertoId = actividad['huertoId'];
+        DocumentSnapshot huertoDoc = await _firestore
+            .collection('huertos')
+            .doc(huertoId)
+            .get();
+        if (huertoDoc.exists) {
+          actividad['huertoNombre'] =
+              (huertoDoc.data() as Map<String, dynamic>)['nombre'];
+        }
+
+        actividadesList.add(actividad);
+      }
+    }
+
+    _actividadesPendientes = actividadesList;
+  }
+
+  // Cargar actividades para Voluntario
+  Future<void> _cargarActividadesVoluntario(String uid) async {
+    List<Map<String, dynamic>> actividadesList = [];
+
+    try {
+      // Obtener actividades donde el usuario está registrado
+      QuerySnapshot actividadesSnapshot = await _firestore
+          .collection('actividades')
+          .get();
+
+      for (var doc in actividadesSnapshot.docs) {
+        Map<String, dynamic> actividad = doc.data() as Map<String, dynamic>;
+        actividad['id'] = doc.id;
+
+        // Verificar si el usuario está registrado en esta actividad
+        List<dynamic> participantes = actividad['participantes'] ?? [];
+
+        var participanteEncontrado = participantes.firstWhere(
+          (p) => p['uid'] == uid,
+          orElse: () => null,
+        );
+
+        if (participanteEncontrado != null) {
+          // El usuario está registrado en esta actividad
+
+          // Obtener nombre del huerto
+          String huertoId = actividad['huertoId'] ?? '';
+          if (huertoId.isNotEmpty) {
+            DocumentSnapshot huertoDoc = await _firestore
+                .collection('huertos')
+                .doc(huertoId)
+                .get();
+
+            if (huertoDoc.exists) {
+              actividad['huertoNombre'] =
+                  (huertoDoc.data() as Map<String, dynamic>)['nombre'] ??
+                  'Sin nombre';
+            } else {
+              actividad['huertoNombre'] = 'Huerto no encontrado';
+            }
+          } else {
+            actividad['huertoNombre'] = 'Sin huerto';
+          }
+
+          // Obtener estado y horas del participante
+          actividad['miEstado'] =
+              participanteEncontrado['estado'] ?? 'pendiente';
+          actividad['misHoras'] =
+              participanteEncontrado['horasComprometidas'] ?? 0;
+
+          // Solo agregar si el estado es pendiente o en proceso
+          String miEstado = actividad['miEstado'];
+          if (miEstado == 'pendiente' || miEstado == 'en_proceso') {
+            actividadesList.add(actividad);
+          }
+        }
+      }
+
+      // Ordenar por fecha si existe el campo
+      actividadesList.sort((a, b) {
+        if (a['fecha'] == null || b['fecha'] == null) return 0;
+        return a['fecha'].compareTo(b['fecha']);
+      });
+
+      _actividadesPendientes = actividadesList;
+
+      print('Actividades cargadas: ${actividadesList.length}'); // Debug
+    } catch (e) {
+      print('Error detallado al cargar actividades: $e');
+      _actividadesPendientes = [];
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -7367,12 +7525,10 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      //Drawer
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
-            //Header del drawer
             DrawerHeader(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
@@ -7423,17 +7579,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               ),
             ),
-
-            //Opción inicio
             ListTile(
               leading: const Icon(Icons.home, color: Colors.green),
               title: const Text('Inicio'),
               onTap: () {
-                Navigator.pop(context); //cerrar el drawer
+                Navigator.pop(context);
               },
             ),
-
-            //opción Huertos (Según tipo de usuario)
             ListTile(
               leading: const Icon(Icons.eco, color: Colors.green),
               title: Text(
@@ -7456,8 +7608,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 );
               },
             ),
-
-            //Opción estadísticas
             ListTile(
               leading: const Icon(Icons.bar_chart, color: Colors.green),
               title: const Text('Estadísticas'),
@@ -7471,8 +7621,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 );
               },
             ),
-
-            //Opción educación
             ListTile(
               leading: const Icon(Icons.school, color: Colors.green),
               title: const Text('Educación'),
@@ -7486,8 +7634,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 );
               },
             ),
-
-            //Opción perfil
             ListTile(
               leading: const Icon(Icons.person, color: Colors.green),
               title: const Text('Perfil'),
@@ -7502,10 +7648,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 );
               },
             ),
-
             const Divider(),
-
-            //Opción cerrar sesión
             ListTile(
               leading: const Icon(Icons.exit_to_app, color: Colors.red),
               title: const Text(
@@ -7513,7 +7656,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 style: TextStyle(color: Colors.red),
               ),
               onTap: () async {
-                // Mostrar diálogo de confirmación
                 bool? confirmar = await showDialog<bool>(
                   context: context,
                   builder: (context) => AlertDialog(
@@ -7552,118 +7694,214 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              //Saludo personalizado
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Colors.green.shade700, Colors.green.shade500],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
+      body: RefreshIndicator(
+        onRefresh: _cargarActividadesPendientes,
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Saludo personalizado
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [Colors.green.shade700, Colors.green.shade500],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.green.withOpacity(0.3),
+                        blurRadius: 10,
+                        offset: const Offset(0, 5),
+                      ),
+                    ],
                   ),
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.green.withOpacity(0.3),
-                      blurRadius: 10,
-                      offset: const Offset(0, 5),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      '¡Hola!',
-                      style: TextStyle(color: Colors.white70, fontSize: 16),
-                    ),
-                    const SizedBox(height: 5),
-                    Text(
-                      nombreUsuario,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        '¡Hola!',
+                        style: TextStyle(color: Colors.white70, fontSize: 16),
                       ),
-                    ),
-                    const SizedBox(height: 5),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 6,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Text(
-                        tipoUsuario,
+                      const SizedBox(height: 5),
+                      Text(
+                        nombreUsuario,
                         style: const TextStyle(
                           color: Colors.white,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
+                      const SizedBox(height: 5),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text(
+                          tipoUsuario,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 30),
+
+                // Título de actividades pendientes
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      tipoUsuario == 'Administrador'
+                          ? 'Actividades de mis Huertos'
+                          : 'Mis Actividades',
+                      style: const TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                      ),
                     ),
+                    if (_actividadesPendientes.isNotEmpty)
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.green.shade100,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text(
+                          '${_actividadesPendientes.length}',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.green.shade800,
+                          ),
+                        ),
+                      ),
                   ],
                 ),
-              ),
-              const SizedBox(height: 30),
+                const SizedBox(height: 15),
 
-              //Actividades pendientes
-              const Text(
-                'Actividades Pendientes',
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
-                ),
-              ),
-              const SizedBox(height: 15),
-
-              //Lista de actividades (placeholder)
-              _buildActividadPlaceholder(
-                'Riego del Huerto Principal',
-                'Hoy - 10:00 AM',
-                Icons.water_drop,
-                Colors.blue,
-              ),
-              const SizedBox(height: 12),
-              _buildActividadPlaceholder(
-                'Poda de Plantas',
-                'Mañana - 2:00 PM',
-                Icons.content_cut,
-                Colors.orange,
-              ),
-              const SizedBox(height: 12),
-              _buildActividadPlaceholder(
-                'Limpieza General',
-                'Viernes - 9:00 AM',
-                Icons.cleaning_services,
-                Colors.purple,
-              ),
-              const SizedBox(height: 30),
-            ],
+                // Lista de actividades
+                _isLoadingActividades
+                    ? const Center(
+                        child: Padding(
+                          padding: EdgeInsets.all(40.0),
+                          child: CircularProgressIndicator(),
+                        ),
+                      )
+                    : _actividadesPendientes.isEmpty
+                    ? _buildEmptyState(tipoUsuario)
+                    : Column(
+                        children: _actividadesPendientes.map((actividad) {
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 12),
+                            child: _buildActividadCard(actividad, tipoUsuario),
+                          );
+                        }).toList(),
+                      ),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  //Widget helper para las actividades placeholder
-  Widget _buildActividadPlaceholder(
-    String titulo,
-    String fecha,
-    IconData icono,
-    Color color,
+  // Widget para estado vacío
+  Widget _buildEmptyState(String tipoUsuario) {
+    return Center(
+      child: Container(
+        padding: const EdgeInsets.all(40),
+        child: Column(
+          children: [
+            Icon(
+              Icons.check_circle_outline,
+              size: 80,
+              color: Colors.grey.shade400,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              tipoUsuario == 'Administrador'
+                  ? 'No hay actividades pendientes'
+                  : 'No tienes actividades registradas',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.grey.shade600,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              tipoUsuario == 'Administrador'
+                  ? 'Crea actividades en tus huertos'
+                  : 'Busca huertos y regístrate en actividades',
+              style: TextStyle(fontSize: 14, color: Colors.grey.shade500),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // Widget para card de actividad
+  Widget _buildActividadCard(
+    Map<String, dynamic> actividad,
+    String tipoUsuario,
   ) {
+    String tipo = actividad['tipo'] ?? 'Sin tipo';
+    String huertoNombre = actividad['huertoNombre'] ?? 'Sin huerto';
+    String descripcion = actividad['descripcion'] ?? '';
+
+    // Mapeo de iconos según tipo de actividad
+    IconData icono;
+    Color color;
+
+    switch (tipo.toLowerCase()) {
+      case 'siembra':
+        icono = Icons.grass;
+        color = Colors.green;
+        break;
+      case 'riego':
+        icono = Icons.water_drop;
+        color = Colors.blue;
+        break;
+      case 'poda':
+        icono = Icons.content_cut;
+        color = Colors.orange;
+        break;
+      case 'limpieza':
+        icono = Icons.cleaning_services;
+        color = Colors.purple;
+        break;
+      case 'cosecha':
+        icono = Icons.shopping_basket;
+        color = Colors.amber;
+        break;
+      default:
+        icono = Icons.assignment;
+        color = Colors.grey;
+    }
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -7677,39 +7915,150 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Icon(icono, color: color, size: 28),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  titulo,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
+      child: InkWell(
+        onTap: () async {
+          // Navegar a detalle de actividad
+          String huertoId = actividad['huertoId'] ?? '';
+
+          if (huertoId.isEmpty) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('No se puede acceder a esta actividad'),
+                backgroundColor: Colors.red,
+              ),
+            );
+            return;
+          }
+
+          // Obtener datos completos del huerto
+          try {
+            DocumentSnapshot huertoDoc = await _firestore
+                .collection('huertos')
+                .doc(huertoId)
+                .get();
+
+            if (!huertoDoc.exists) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Huerto no encontrado'),
+                  backgroundColor: Colors.red,
+                ),
+              );
+              return;
+            }
+
+            Map<String, dynamic> huertoData =
+                huertoDoc.data() as Map<String, dynamic>;
+            huertoData['id'] = huertoDoc.id;
+
+            // Navegar según tipo de usuario
+            if (tipoUsuario == 'Voluntario') {
+              final resultado = await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => DetalleActividadScreen(
+                    actividadData: actividad,
+                    userData: widget.userData,
+                    huertoData: huertoData,
                   ),
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  fecha,
-                  style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
+              );
+
+              // Si hubo cambios, recargar
+              if (resultado == true) {
+                _cargarActividadesPendientes();
+              }
+            } else {
+              // Para administrador, ir a detalle del huerto
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => DetalleHuertoScreen(
+                    huertoData: huertoData,
+                    userData: widget.userData,
+                  ),
                 ),
-              ],
+              );
+            }
+          } catch (e) {
+            print('Error al cargar huerto: $e');
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
+            );
+          }
+        },
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: color.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Icon(icono, color: color, size: 28),
             ),
-          ),
-          Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey.shade400),
-        ],
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    tipo,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      Icon(Icons.eco, size: 14, color: Colors.grey.shade600),
+                      const SizedBox(width: 4),
+                      Expanded(
+                        child: Text(
+                          huertoNombre,
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: Colors.grey.shade600,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                  if (tipoUsuario == 'Voluntario' &&
+                      actividad['misHoras'] != null) ...[
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.access_time,
+                          size: 14,
+                          color: Colors.grey.shade600,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          '${actividad['misHoras']} horas',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey.shade600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            Icon(
+              Icons.arrow_forward_ios,
+              size: 16,
+              color: Colors.grey.shade400,
+            ),
+          ],
+        ),
       ),
     );
   }
