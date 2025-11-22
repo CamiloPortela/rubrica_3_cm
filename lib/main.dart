@@ -1,4 +1,5 @@
-import 'package:flutter_localizations/flutter_localizations.dart' as localizations;
+import 'package:flutter_localizations/flutter_localizations.dart'
+    as localizations;
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -175,9 +176,8 @@ class MyApp extends StatelessWidget {
         Locale('en', 'US'), // Inglés
       ],
       locale: const Locale('es', 'ES'), //español por defecto
-      
-      home: const WelcomeScreen(),
 
+      home: const WelcomeScreen(),
     );
   }
 }
@@ -1099,10 +1099,10 @@ class PerfilScreen extends StatelessWidget {
     String direccion = userData['direccion'] ?? 'No especificada';
     String horario = userData['horario'] ?? 'No especificado';
     String tipoUsuario = userData['tipoUsuario'] ?? 'Voluntario';
-    
+
     // Obtener actividades completadas (por ahora de Firebase o lista vacía)
     List actividadesCompletadas = userData['actividadesCompletadas'] ?? [];
-    
+
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
       appBar: AppBar(
@@ -1147,7 +1147,7 @@ class PerfilScreen extends StatelessWidget {
               child: Column(
                 children: [
                   const SizedBox(height: 20),
-                  
+
                   //Imagen de perfil
                   Container(
                     width: 120,
@@ -1170,7 +1170,7 @@ class PerfilScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  
+
                   // Nombre
                   Text(
                     nombre,
@@ -1181,17 +1181,14 @@ class PerfilScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  
+
                   // Usuario
                   Text(
                     '@$usuario',
-                    style: const TextStyle(
-                      color: Colors.white70,
-                      fontSize: 16,
-                    ),
+                    style: const TextStyle(color: Colors.white70, fontSize: 16),
                   ),
                   const SizedBox(height: 12),
-                  
+
                   // Badge tipo de usuario
                   Container(
                     padding: const EdgeInsets.symmetric(
@@ -1249,7 +1246,7 @@ class PerfilScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  
+
                   //Cards de estadísticas
                   Row(
                     children: [
@@ -1274,9 +1271,9 @@ class PerfilScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                  
+
                   const SizedBox(height: 24),
-                  
+
                   // Sección: Información Personal
                   const Text(
                     'Información Personal',
@@ -1287,7 +1284,7 @@ class PerfilScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  
+
                   // Card de información
                   _buildInfoCard([
                     _buildInfoRow(Icons.email, 'Correo', correo),
@@ -1296,11 +1293,15 @@ class PerfilScreen extends StatelessWidget {
                     const Divider(height: 24),
                     _buildInfoRow(Icons.location_on, 'Dirección', direccion),
                     const Divider(height: 24),
-                    _buildInfoRow(Icons.access_time, 'Horario disponible', horario),
+                    _buildInfoRow(
+                      Icons.access_time,
+                      'Horario disponible',
+                      horario,
+                    ),
                   ]),
-                  
+
                   const SizedBox(height: 24),
-                  
+
                   // Sección: Descripción
                   const Text(
                     'Acerca de mí',
@@ -1311,7 +1312,7 @@ class PerfilScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  
+
                   // Card de descripción
                   Container(
                     width: double.infinity,
@@ -1338,9 +1339,9 @@ class PerfilScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  
+
                   const SizedBox(height: 24),
-                  
+
                   // Sección: Historial de Actividades
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1372,12 +1373,12 @@ class PerfilScreen extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 16),
-                  
+
                   // Lista de actividades o mensaje vacío
                   actividadesCompletadas.isEmpty
                       ? _buildEmptyActivities()
                       : _buildActivityList(actividadesCompletadas),
-                  
+
                   const SizedBox(height: 30),
                 ],
               ),
@@ -1504,27 +1505,17 @@ class PerfilScreen extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   huerto,
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: Colors.grey.shade600,
-                  ),
+                  style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   fecha,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey.shade500,
-                  ),
+                  style: TextStyle(fontSize: 12, color: Colors.grey.shade500),
                 ),
               ],
             ),
           ),
-          Icon(
-            Icons.check_circle,
-            color: Colors.green.shade600,
-            size: 20,
-          ),
+          Icon(Icons.check_circle, color: Colors.green.shade600, size: 20),
         ],
       ),
     );
@@ -1582,9 +1573,7 @@ class PerfilScreen extends StatelessWidget {
           ),
         ],
       ),
-      child: Column(
-        children: children,
-      ),
+      child: Column(children: children),
     );
   }
 
@@ -1598,11 +1587,7 @@ class PerfilScreen extends StatelessWidget {
             color: Colors.green.shade50,
             borderRadius: BorderRadius.circular(10),
           ),
-          child: Icon(
-            icon,
-            color: Colors.green.shade700,
-            size: 22,
-          ),
+          child: Icon(icon, color: Colors.green.shade700, size: 22),
         ),
         const SizedBox(width: 16),
         Expanded(
@@ -1634,7 +1619,12 @@ class PerfilScreen extends StatelessWidget {
   }
 
   // Widget helper para card de estadística
-  Widget _buildStatCard(IconData icon, String value, String label, Color color) {
+  Widget _buildStatCard(
+    IconData icon,
+    String value,
+    String label,
+    Color color,
+  ) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -1656,11 +1646,7 @@ class PerfilScreen extends StatelessWidget {
               color: color.withOpacity(0.1),
               shape: BoxShape.circle,
             ),
-            child: Icon(
-              icon,
-              color: color,
-              size: 28,
-            ),
+            child: Icon(icon, color: color, size: 28),
           ),
           const SizedBox(height: 12),
           Text(
@@ -1708,7 +1694,6 @@ class _HuertosScreenState extends State<HuertosScreen> {
     _cargarHuertos();
   }
 
-  // Cargar huertos según tipo de usuario
   Future<void> _cargarHuertos() async {
     setState(() {
       _isLoading = true;
@@ -1730,8 +1715,35 @@ class _HuertosScreenState extends State<HuertosScreen> {
             .map((doc) => {...doc.data() as Map<String, dynamic>, 'id': doc.id})
             .toList();
       } else {
-        // Para voluntarios (lo implementaremos después)
-        _misHuertos = [];
+        // Cargar huertos en los que está registrado el voluntario
+        DocumentSnapshot userDoc = await _firestore
+            .collection('usuarios')
+            .doc(uid)
+            .get();
+
+        if (userDoc.exists) {
+          Map<String, dynamic> userData =
+              userDoc.data() as Map<String, dynamic>;
+          List<dynamic> huertosIds = userData['huertosRegistrados'] ?? [];
+
+          List<Map<String, dynamic>> huertosList = [];
+
+          for (String huertoId in huertosIds) {
+            DocumentSnapshot huertoDoc = await _firestore
+                .collection('huertos')
+                .doc(huertoId)
+                .get();
+
+            if (huertoDoc.exists) {
+              Map<String, dynamic> huertoData =
+                  huertoDoc.data() as Map<String, dynamic>;
+              huertoData['id'] = huertoDoc.id;
+              huertosList.add(huertoData);
+            }
+          }
+
+          _misHuertos = huertosList;
+        }
       }
     } catch (e) {
       print('Error al cargar huertos: $e');
@@ -1764,14 +1776,17 @@ class _HuertosScreenState extends State<HuertosScreen> {
         ),
         title: Text(
           esAdmin ? 'Mis Huertos' : 'Huertos',
-          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : esAdmin
-              ? _buildAdminView()
-              : _buildVoluntarioView(),
+          ? _buildAdminView()
+          : _buildVoluntarioView(),
     );
   }
 
@@ -1806,7 +1821,7 @@ class _HuertosScreenState extends State<HuertosScreen> {
                     child: Image.asset(
                       'assets/images/apple_png.png',
                       fit: BoxFit.cover,
-                  )
+                    ),
                   ),
                 ),
               ),
@@ -1821,18 +1836,16 @@ class _HuertosScreenState extends State<HuertosScreen> {
                     final resultado = await Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => CrearHuertoScreen(
-                          userData: widget.userData,
-                        ),
+                        builder: (context) =>
+                            CrearHuertoScreen(userData: widget.userData),
                       ),
                     );
-                      
-                      // Si se creó un huerto, recargar la lista
-                      if (resultado == true) {
-                        _cargarHuertos();
-                      }
 
-                    },
+                    // Si se creó un huerto, recargar la lista
+                    if (resultado == true) {
+                      _cargarHuertos();
+                    }
+                  },
                   icon: const Icon(Icons.add, color: Colors.white),
                   label: const Text(
                     'Crear Nuevo Huerto',
@@ -1907,35 +1920,243 @@ class _HuertosScreenState extends State<HuertosScreen> {
     );
   }
 
-  // Vista para Voluntarios (placeholder por ahora)
+  // Vista para Voluntarios
   Widget _buildVoluntarioView() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.eco,
-            size: 80,
-            color: Colors.grey.shade400,
+    return RefreshIndicator(
+      onRefresh: _cargarHuertos,
+      child: SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Imagen de personaje
+              Center(
+                child: Container(
+                  width: 120,
+                  height: 120,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.2),
+                        blurRadius: 10,
+                        offset: const Offset(0, 5),
+                      ),
+                    ],
+                  ),
+                  child: ClipOval(
+                    child: Image.asset(
+                      'assets/images/apple_png.png',
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 30),
+
+              // Botón Buscar Huertos
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: () async {
+                    // Navegar a búsqueda de huertos
+                    final resultado = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            BuscarHuertosScreen(userData: widget.userData),
+                      ),
+                    );
+
+                    // Si hubo cambios (se registró en un huerto), recargar lista
+                    if (resultado == true) {
+                      _cargarHuertos();
+                    }
+                  },
+                  icon: const Icon(Icons.search, color: Colors.white),
+                  label: const Text(
+                    'Buscar Huertos',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green.shade700,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    elevation: 2,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 30),
+
+              // Título
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Mis Huertos',
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
+                  ),
+                  if (_misHuertos.isNotEmpty)
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.green.shade100,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        '${_misHuertos.length}',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.green.shade800,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+              const SizedBox(height: 20),
+
+              // Lista de huertos o mensaje vacío
+              _misHuertos.isEmpty
+                  ? _buildEmptyStateVoluntario()
+                  : Column(
+                      children: _misHuertos.map((huerto) {
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 16),
+                          child: _buildHuertoCardVoluntario(huerto),
+                        );
+                      }).toList(),
+                    ),
+            ],
           ),
-          const SizedBox(height: 16),
+        ),
+      ),
+    );
+  }
+
+  // Widget para estado vacío (Voluntario)
+  Widget _buildEmptyStateVoluntario() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(40),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Icon(Icons.park_outlined, size: 80, color: Colors.grey.shade400),
+          const SizedBox(height: 20),
           Text(
-            'Vista de Voluntario',
+            'No estás registrado en ningún huerto',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: Colors.grey.shade600,
+              color: Colors.grey.shade700,
             ),
+            textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 12),
           Text(
-            'Esta sección se implementará en el Paso 5',
+            'Busca huertos disponibles\ny únete para colaborar',
+            textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 14,
               color: Colors.grey.shade500,
+              height: 1.5,
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  // Widget para card de huerto (vista Voluntario)
+  Widget _buildHuertoCardVoluntario(Map<String, dynamic> huerto) {
+    String nombre = huerto['nombre'] ?? 'Sin nombre';
+    String tipoCultivo = huerto['tipoCultivo'] ?? 'No especificado';
+    String tamano = huerto['tamaño'] ?? 'No especificado';
+
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            blurRadius: 5,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: ListTile(
+        contentPadding: const EdgeInsets.all(16),
+        leading: Container(
+          width: 50,
+          height: 50,
+          decoration: BoxDecoration(
+            color: Colors.green.shade100,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Icon(Icons.grass, color: Colors.green.shade700, size: 30),
+        ),
+        title: Text(
+          nombre,
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+        ),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 4),
+            Text(
+              'Tipo: $tipoCultivo',
+              style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
+            ),
+            Text(
+              'Tamaño: $tamano',
+              style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
+            ),
+          ],
+        ),
+        trailing: Icon(
+          Icons.arrow_forward_ios,
+          color: Colors.grey.shade400,
+          size: 16,
+        ),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => DetalleHuertoVoluntarioScreen(
+                huertoData: huerto,
+                userData: widget.userData,
+              ),
+            ),
+          );
+        },
       ),
     );
   }
@@ -1958,11 +2179,7 @@ class _HuertosScreenState extends State<HuertosScreen> {
       ),
       child: Column(
         children: [
-          Icon(
-            Icons.park_outlined,
-            size: 80,
-            color: Colors.grey.shade400,
-          ),
+          Icon(Icons.park_outlined, size: 80, color: Colors.grey.shade400),
           const SizedBox(height: 20),
           Text(
             'Aún no has creado huertos',
@@ -2031,11 +2248,7 @@ class _HuertosScreenState extends State<HuertosScreen> {
                     color: Colors.white.withOpacity(0.3),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: const Icon(
-                    Icons.eco,
-                    color: Colors.white,
-                    size: 28,
-                  ),
+                  child: const Icon(Icons.eco, color: Colors.white, size: 28),
                 ),
                 const SizedBox(width: 16),
                 Expanded(
@@ -2101,11 +2314,7 @@ class _HuertosScreenState extends State<HuertosScreen> {
                 Row(
                   children: [
                     Expanded(
-                      child: _buildInfoItem(
-                        Icons.straighten,
-                        'Tamaño',
-                        tamano,
-                      ),
+                      child: _buildInfoItem(Icons.straighten, 'Tamaño', tamano),
                     ),
                     Container(
                       width: 1,
@@ -2183,10 +2392,7 @@ class _HuertosScreenState extends State<HuertosScreen> {
                         ),
                         label: const Text(
                           'Gestionar',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 13,
-                          ),
+                          style: TextStyle(color: Colors.white, fontSize: 13),
                         ),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.green.shade700,
@@ -2212,18 +2418,11 @@ class _HuertosScreenState extends State<HuertosScreen> {
   Widget _buildInfoItem(IconData icon, String label, String value) {
     return Column(
       children: [
-        Icon(
-          icon,
-          size: 20,
-          color: Colors.green.shade700,
-        ),
+        Icon(icon, size: 20, color: Colors.green.shade700),
         const SizedBox(height: 4),
         Text(
           label,
-          style: TextStyle(
-            fontSize: 11,
-            color: Colors.grey.shade600,
-          ),
+          style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
         ),
         const SizedBox(height: 2),
         Text(
@@ -2242,6 +2441,1697 @@ class _HuertosScreenState extends State<HuertosScreen> {
   }
 }
 
+// Pantalla de búsqueda de huertos
+class BuscarHuertosScreen extends StatefulWidget {
+  final Map<String, dynamic> userData;
+
+  const BuscarHuertosScreen({Key? key, required this.userData})
+    : super(key: key);
+
+  @override
+  State<BuscarHuertosScreen> createState() => _BuscarHuertosScreenState();
+}
+
+class _BuscarHuertosScreenState extends State<BuscarHuertosScreen> {
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final TextEditingController _searchController = TextEditingController();
+
+  List<Map<String, dynamic>> _todosLosHuertos = [];
+  List<Map<String, dynamic>> _huertosFiltrados = [];
+  List<String> _misHuertosIds = [];
+  bool _isLoading = true;
+  bool _isSearching = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _cargarHuertos();
+  }
+
+  // Cargar todos los huertos disponibles
+  Future<void> _cargarHuertos() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      String uid = widget.userData['uid'];
+
+      // Obtener IDs de huertos donde ya está registrado el voluntario
+      DocumentSnapshot userDoc = await _firestore
+          .collection('usuarios')
+          .doc(uid)
+          .get();
+      if (userDoc.exists) {
+        Map<String, dynamic> userData = userDoc.data() as Map<String, dynamic>;
+        _misHuertosIds = List<String>.from(
+          userData['huertosRegistrados'] ?? [],
+        );
+      }
+
+      // Obtener todos los huertos activos
+      QuerySnapshot snapshot = await _firestore
+          .collection('huertos')
+          .where('estado', isEqualTo: 'activo')
+          .get();
+
+      _todosLosHuertos = snapshot.docs
+          .map((doc) => {...doc.data() as Map<String, dynamic>, 'id': doc.id})
+          .toList();
+
+      _huertosFiltrados = _todosLosHuertos;
+
+      setState(() {
+        _isLoading = false;
+      });
+    } catch (e) {
+      print('Error al cargar huertos: $e');
+      setState(() {
+        _isLoading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error al cargar huertos: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  // Filtrar huertos por búsqueda
+  void _filtrarHuertos(String query) {
+    setState(() {
+      _isSearching = query.isNotEmpty;
+
+      if (query.isEmpty) {
+        _huertosFiltrados = _todosLosHuertos;
+      } else {
+        _huertosFiltrados = _todosLosHuertos.where((huerto) {
+          String nombre = (huerto['nombre'] ?? '').toLowerCase();
+          String direccion = (huerto['direccion'] ?? '').toLowerCase();
+          String busqueda = query.toLowerCase();
+
+          return nombre.contains(busqueda) || direccion.contains(busqueda);
+        }).toList();
+      }
+    });
+  }
+
+  // Registrarse en un huerto
+  Future<void> _registrarseEnHuerto(Map<String, dynamic> huerto) async {
+    // Mostrar diálogo de confirmación
+    bool? confirmar = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Confirmar registro'),
+        content: Text(
+          '¿Deseas registrarte en el huerto "${huerto['nombre']}"?',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancelar'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.green.shade700,
+            ),
+            child: const Text(
+              'Confirmar',
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmar != true) return;
+
+    // Mostrar loading
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const Center(child: CircularProgressIndicator()),
+    );
+
+    try {
+      String uid = widget.userData['uid'];
+      String huertoId = huerto['id'];
+
+      // Agregar huerto a la lista del usuario
+      await _firestore.collection('usuarios').doc(uid).update({
+        'huertosRegistrados': FieldValue.arrayUnion([huertoId]),
+      });
+
+      // Agregar usuario a la lista de voluntarios del huerto
+      await _firestore.collection('huertos').doc(huertoId).update({
+        'voluntarios': FieldValue.arrayUnion([uid]),
+      });
+
+      // Cerrar loading
+      Navigator.pop(context);
+
+      // Mostrar éxito
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('¡Te has registrado en ${huerto['nombre']}!'),
+          backgroundColor: Colors.green,
+        ),
+      );
+
+      // Actualizar lista
+      _cargarHuertos();
+    } catch (e) {
+      // Cerrar loading
+      Navigator.pop(context);
+
+      print('Error al registrarse: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error al registrarse: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.grey.shade50,
+      appBar: AppBar(
+        backgroundColor: Colors.green.shade700,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () =>
+              Navigator.pop(context, true), // true indica que hubo cambios
+        ),
+        title: const Text(
+          'Buscar Huertos',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
+      ),
+      body: Column(
+        children: [
+          // Barra de búsqueda
+          Container(
+            color: Colors.green.shade700,
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            child: TextField(
+              controller: _searchController,
+              onChanged: _filtrarHuertos,
+              style: const TextStyle(color: Colors.white),
+              decoration: InputDecoration(
+                hintText: 'Buscar por nombre o zona...',
+                hintStyle: TextStyle(color: Colors.white.withOpacity(0.7)),
+                prefixIcon: const Icon(Icons.search, color: Colors.white),
+                suffixIcon: _isSearching
+                    ? IconButton(
+                        icon: const Icon(Icons.clear, color: Colors.white),
+                        onPressed: () {
+                          _searchController.clear();
+                          _filtrarHuertos('');
+                        },
+                      )
+                    : null,
+                filled: true,
+                fillColor: Colors.white.withOpacity(0.2),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide.none,
+                ),
+                contentPadding: const EdgeInsets.symmetric(vertical: 12),
+              ),
+            ),
+          ),
+
+          // Lista de resultados
+          Expanded(
+            child: _isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : _huertosFiltrados.isEmpty
+                ? _buildEmptyResults()
+                : RefreshIndicator(
+                    onRefresh: _cargarHuertos,
+                    child: ListView.builder(
+                      padding: const EdgeInsets.all(16),
+                      itemCount: _huertosFiltrados.length,
+                      itemBuilder: (context, index) {
+                        Map<String, dynamic> huerto = _huertosFiltrados[index];
+                        bool yaRegistrado = _misHuertosIds.contains(
+                          huerto['id'],
+                        );
+                        return _buildHuertoCard(huerto, yaRegistrado);
+                      },
+                    ),
+                  ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Widget para resultados vacíos
+  Widget _buildEmptyResults() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(40.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              _isSearching ? Icons.search_off : Icons.eco_outlined,
+              size: 80,
+              color: Colors.grey.shade400,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              _isSearching
+                  ? 'No se encontraron huertos'
+                  : 'No hay huertos disponibles',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.grey.shade600,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              _isSearching ? 'Intenta con otra búsqueda' : 'Vuelve más tarde',
+              style: TextStyle(fontSize: 14, color: Colors.grey.shade500),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // Widget para card de huerto
+  Widget _buildHuertoCard(Map<String, dynamic> huerto, bool yaRegistrado) {
+    String nombre = huerto['nombre'] ?? 'Sin nombre';
+    String tamano = huerto['tamaño'] ?? 'No especificado';
+    String tipoCultivo = huerto['tipoCultivo'] ?? 'No especificado';
+    String direccion = huerto['direccion'] ?? 'No especificada';
+    int maxVoluntarios = huerto['maxVoluntarios'] ?? 999;
+    int numVoluntarios = (huerto['voluntarios'] ?? []).length;
+    bool aceptaVoluntarios = numVoluntarios < maxVoluntarios;
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header del card con imagen
+          Container(
+            height: 120,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Colors.green.shade600, Colors.green.shade400],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(16),
+                topRight: Radius.circular(16),
+              ),
+            ),
+            child: Center(
+              child: Icon(
+                Icons.eco,
+                size: 60,
+                color: Colors.white.withOpacity(0.5),
+              ),
+            ),
+          ),
+
+          // Información del huerto
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Nombre y estado
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        nombre,
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
+                        ),
+                      ),
+                    ),
+                    if (yaRegistrado)
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.blue.shade100,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.check_circle,
+                              size: 14,
+                              color: Colors.blue.shade700,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              'REGISTRADO',
+                              style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.blue.shade700,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+
+                // Información
+                _buildInfoRow(Icons.location_on, direccion),
+                const SizedBox(height: 8),
+                _buildInfoRow(Icons.grass, 'Tipo: $tipoCultivo'),
+                const SizedBox(height: 8),
+                _buildInfoRow(Icons.straighten, 'Tamaño: $tamano'),
+                const SizedBox(height: 8),
+                _buildInfoRow(
+                  Icons.people,
+                  'Voluntarios: $numVoluntarios${maxVoluntarios < 999 ? '/$maxVoluntarios' : ''}',
+                ),
+                const SizedBox(height: 16),
+
+                // Indicador de disponibilidad
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ),
+                  decoration: BoxDecoration(
+                    color: aceptaVoluntarios
+                        ? Colors.green.shade50
+                        : Colors.orange.shade50,
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: aceptaVoluntarios
+                          ? Colors.green.shade200
+                          : Colors.orange.shade200,
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        aceptaVoluntarios ? Icons.check_circle : Icons.info,
+                        size: 16,
+                        color: aceptaVoluntarios
+                            ? Colors.green.shade700
+                            : Colors.orange.shade700,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        aceptaVoluntarios
+                            ? 'Cupos disponibles'
+                            : 'Cupo completo',
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                          color: aceptaVoluntarios
+                              ? Colors.green.shade700
+                              : Colors.orange.shade700,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 16),
+
+                // Botón de acción
+                SizedBox(
+                  width: double.infinity,
+                  child: yaRegistrado
+                      ? OutlinedButton.icon(
+                          onPressed: null,
+                          icon: const Icon(Icons.check, size: 18),
+                          label: const Text('Ya estás registrado'),
+                          style: OutlinedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            side: BorderSide(color: Colors.grey.shade300),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                        )
+                      : ElevatedButton.icon(
+                          onPressed: aceptaVoluntarios
+                              ? () => _registrarseEnHuerto(huerto)
+                              : null,
+                          icon: const Icon(
+                            Icons.add,
+                            size: 18,
+                            color: Colors.white,
+                          ),
+                          label: Text(
+                            aceptaVoluntarios ? 'Registrarse' : 'Cupo lleno',
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.green.shade700,
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            elevation: 0,
+                          ),
+                        ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Widget helper para filas de información
+  Widget _buildInfoRow(IconData icon, String text) {
+    return Row(
+      children: [
+        Icon(icon, size: 16, color: Colors.grey.shade600),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Text(
+            text,
+            style: TextStyle(fontSize: 14, color: Colors.grey.shade700),
+          ),
+        ),
+      ],
+    );
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+}
+
+// Pantalla de detalle de huerto para Voluntario
+class DetalleHuertoVoluntarioScreen extends StatefulWidget {
+  final Map<String, dynamic> huertoData;
+  final Map<String, dynamic> userData;
+
+  const DetalleHuertoVoluntarioScreen({
+    Key? key,
+    required this.huertoData,
+    required this.userData,
+  }) : super(key: key);
+
+  @override
+  State<DetalleHuertoVoluntarioScreen> createState() =>
+      _DetalleHuertoVoluntarioScreenState();
+}
+
+class _DetalleHuertoVoluntarioScreenState
+    extends State<DetalleHuertoVoluntarioScreen> {
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  List<Map<String, dynamic>> _voluntarios = [];
+  List<Map<String, dynamic>> _actividades = [];
+  bool _isLoadingVoluntarios = true;
+  bool _isLoadingActividades = true;
+  int _selectedTab = 0; // 0: Info, 1: Voluntarios, 2: Actividades
+
+  @override
+  void initState() {
+    super.initState();
+    _cargarVoluntarios();
+    _cargarActividades();
+  }
+
+  // Cargar lista de voluntarios del huerto
+  Future<void> _cargarVoluntarios() async {
+    setState(() {
+      _isLoadingVoluntarios = true;
+    });
+
+    try {
+      List<dynamic> voluntariosIds = widget.huertoData['voluntarios'] ?? [];
+      List<Map<String, dynamic>> voluntariosList = [];
+
+      for (String uid in voluntariosIds) {
+        DocumentSnapshot userDoc = await _firestore
+            .collection('usuarios')
+            .doc(uid)
+            .get();
+
+        if (userDoc.exists) {
+          Map<String, dynamic> userData =
+              userDoc.data() as Map<String, dynamic>;
+          userData['uid'] = uid;
+          voluntariosList.add(userData);
+        }
+      }
+
+      setState(() {
+        _voluntarios = voluntariosList;
+        _isLoadingVoluntarios = false;
+      });
+    } catch (e) {
+      print('Error al cargar voluntarios: $e');
+      setState(() {
+        _isLoadingVoluntarios = false;
+      });
+    }
+  }
+
+  // Cargar actividades del huerto
+  Future<void> _cargarActividades() async {
+    setState(() {
+      _isLoadingActividades = true;
+    });
+
+    try {
+      String huertoId = widget.huertoData['id'];
+
+      QuerySnapshot snapshot = await _firestore
+          .collection('actividades')
+          .where('huertoId', isEqualTo: huertoId)
+          .orderBy('fecha', descending: false)
+          .get();
+
+      _actividades = snapshot.docs
+          .map((doc) => {...doc.data() as Map<String, dynamic>, 'id': doc.id})
+          .toList();
+
+      setState(() {
+        _isLoadingActividades = false;
+      });
+    } catch (e) {
+      print('Error al cargar actividades: $e');
+      setState(() {
+        _isLoadingActividades = false;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    String nombre = widget.huertoData['nombre'] ?? 'Sin nombre';
+
+    return Scaffold(
+      backgroundColor: Colors.grey.shade50,
+      appBar: AppBar(
+        backgroundColor: Colors.green.shade700,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: Text(
+          nombre,
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+      body: Column(
+        children: [
+          // Tabs
+          Container(
+            color: Colors.white,
+            child: Row(
+              children: [
+                _buildTab(0, Icons.info, 'Información'),
+                _buildTab(1, Icons.people, 'Voluntarios'),
+                _buildTab(2, Icons.assignment, 'Actividades'),
+              ],
+            ),
+          ),
+
+          // Contenido según tab seleccionado
+          Expanded(
+            child: _selectedTab == 0
+                ? _buildInfoTab()
+                : _selectedTab == 1
+                ? _buildVoluntariosTab()
+                : _buildActividadesTab(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Widget para cada tab
+  Widget _buildTab(int index, IconData icon, String label) {
+    bool isSelected = _selectedTab == index;
+
+    return Expanded(
+      child: InkWell(
+        onTap: () {
+          setState(() {
+            _selectedTab = index;
+          });
+        },
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          decoration: BoxDecoration(
+            border: Border(
+              bottom: BorderSide(
+                color: isSelected ? Colors.green.shade700 : Colors.transparent,
+                width: 3,
+              ),
+            ),
+          ),
+          child: Column(
+            children: [
+              Icon(
+                icon,
+                color: isSelected
+                    ? Colors.green.shade700
+                    : Colors.grey.shade500,
+                size: 24,
+              ),
+              const SizedBox(height: 4),
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                  color: isSelected
+                      ? Colors.green.shade700
+                      : Colors.grey.shade600,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  // Tab de información del huerto
+  Widget _buildInfoTab() {
+    String nombre = widget.huertoData['nombre'] ?? 'Sin nombre';
+    String tamano = widget.huertoData['tamaño'] ?? 'No especificado';
+    String tipoCultivo = widget.huertoData['tipoCultivo'] ?? 'No especificado';
+    String estado = widget.huertoData['estado'] ?? 'activo';
+    String direccion = widget.huertoData['direccion'] ?? 'No especificada';
+    String descripcion = widget.huertoData['descripcion'] ?? 'Sin descripción';
+    int numVoluntarios = (widget.huertoData['voluntarios'] ?? []).length;
+
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Imagen del huerto
+          Container(
+            height: 200,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Colors.green.shade600, Colors.green.shade400],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Center(
+              child: Icon(
+                Icons.eco,
+                size: 100,
+                color: Colors.white.withOpacity(0.5),
+              ),
+            ),
+          ),
+          const SizedBox(height: 24),
+
+          // Información principal
+          _buildInfoSection('Información General', [
+            _buildInfoItem('Nombre', nombre, Icons.eco),
+            _buildInfoItem('Tamaño', tamano, Icons.straighten),
+            _buildInfoItem('Tipo de cultivo', tipoCultivo, Icons.grass),
+            _buildInfoItem(
+              'Estado',
+              estado.toUpperCase(),
+              Icons.info,
+              statusColor: estado == 'activo' ? Colors.green : Colors.orange,
+            ),
+            _buildInfoItem(
+              'Voluntarios',
+              '$numVoluntarios personas',
+              Icons.people,
+            ),
+          ]),
+          const SizedBox(height: 24),
+
+          // Ubicación
+          _buildInfoSection('Ubicación', [
+            _buildInfoItem('Dirección', direccion, Icons.location_on),
+          ]),
+          const SizedBox(height: 24),
+
+          // Descripción
+          _buildInfoSection('Descripción', [
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              child: Text(
+                descripcion,
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.grey.shade700,
+                  height: 1.5,
+                ),
+              ),
+            ),
+          ]),
+        ],
+      ),
+    );
+  }
+
+  // Tab de voluntarios
+  Widget _buildVoluntariosTab() {
+    if (_isLoadingVoluntarios) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (_voluntarios.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.people_outline, size: 80, color: Colors.grey.shade400),
+            const SizedBox(height: 16),
+            Text(
+              'No hay voluntarios registrados',
+              style: TextStyle(fontSize: 16, color: Colors.grey.shade600),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return RefreshIndicator(
+      onRefresh: _cargarVoluntarios,
+      child: ListView.builder(
+        padding: const EdgeInsets.all(16),
+        itemCount: _voluntarios.length,
+        itemBuilder: (context, index) {
+          Map<String, dynamic> voluntario = _voluntarios[index];
+          return _buildVoluntarioCard(voluntario);
+        },
+      ),
+    );
+  }
+
+  // Tab de actividades
+  Widget _buildActividadesTab() {
+    if (_isLoadingActividades) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (_actividades.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.assignment_outlined,
+              size: 80,
+              color: Colors.grey.shade400,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'No hay actividades disponibles',
+              style: TextStyle(fontSize: 16, color: Colors.grey.shade600),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'El administrador publicará actividades próximamente',
+              style: TextStyle(fontSize: 13, color: Colors.grey.shade500),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      );
+    }
+
+    return RefreshIndicator(
+      onRefresh: _cargarActividades,
+      child: ListView.builder(
+        padding: const EdgeInsets.all(16),
+        itemCount: _actividades.length,
+        itemBuilder: (context, index) {
+          Map<String, dynamic> actividad = _actividades[index];
+          return _buildActividadCard(actividad);
+        },
+      ),
+    );
+  }
+
+  // Widget para sección de información
+  Widget _buildInfoSection(String title, List<Widget> children) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            blurRadius: 5,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+            ),
+          ),
+          const SizedBox(height: 16),
+          ...children,
+        ],
+      ),
+    );
+  }
+
+  // Widget para item de información
+  Widget _buildInfoItem(
+    String label,
+    String value,
+    IconData icon, {
+    Color? statusColor,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: (statusColor ?? Colors.green.shade700).withOpacity(0.1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(
+              icon,
+              size: 20,
+              color: statusColor ?? Colors.green.shade700,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  value,
+                  style: const TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black87,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Widget para card de voluntario
+  Widget _buildVoluntarioCard(Map<String, dynamic> voluntario) {
+    String nombre = voluntario['nombre'] ?? 'Sin nombre';
+    String correo = voluntario['correo'] ?? '';
+    String telefono = voluntario['telefono'] ?? '';
+    bool esYo = voluntario['uid'] == widget.userData['uid'];
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: esYo
+            ? Border.all(color: Colors.green.shade700, width: 2)
+            : null,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            blurRadius: 5,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          CircleAvatar(
+            radius: 28,
+            backgroundColor: Colors.green.shade100,
+            child: Icon(Icons.person, color: Colors.green.shade700, size: 28),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        nombre,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
+                        ),
+                      ),
+                    ),
+                    if (esYo)
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.green.shade100,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          'TÚ',
+                          style: TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.green.shade700,
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+                if (correo.isNotEmpty) ...[
+                  const SizedBox(height: 4),
+                  Text(
+                    correo,
+                    style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
+                  ),
+                ],
+                if (telefono.isNotEmpty) ...[
+                  const SizedBox(height: 2),
+                  Text(
+                    telefono,
+                    style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Widget para card de actividad
+  Widget _buildActividadCard(Map<String, dynamic> actividad) {
+    String tipo = actividad['tipo'] ?? 'Sin tipo';
+    String descripcion = actividad['descripcion'] ?? 'Sin descripción';
+
+    // Mapeo de iconos según tipo de actividad
+    IconData icono;
+    Color color;
+
+    switch (tipo.toLowerCase()) {
+      case 'siembra':
+        icono = Icons.grass;
+        color = Colors.green;
+        break;
+      case 'riego':
+        icono = Icons.water_drop;
+        color = Colors.blue;
+        break;
+      case 'poda':
+        icono = Icons.content_cut;
+        color = Colors.orange;
+        break;
+      case 'limpieza':
+        icono = Icons.cleaning_services;
+        color = Colors.purple;
+        break;
+      case 'cosecha':
+        icono = Icons.shopping_basket;
+        color = Colors.amber;
+        break;
+      default:
+        icono = Icons.assignment;
+        color = Colors.grey;
+    }
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            blurRadius: 5,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: ListTile(
+        contentPadding: const EdgeInsets.all(16),
+        leading: Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: color.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Icon(icono, color: color, size: 28),
+        ),
+        title: Text(
+          tipo,
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+        subtitle: Text(
+          descripcion,
+          style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+        ),
+        trailing: Icon(
+          Icons.arrow_forward_ios,
+          size: 16,
+          color: Colors.grey.shade400,
+        ),
+        onTap: () async {
+          final resultado = await Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => DetalleActividadScreen(
+                actividadData: actividad,
+                userData: widget.userData,
+                huertoData: widget.huertoData,
+              ),
+            ),
+          );
+
+          // Si se registró, recargar actividades
+          if (resultado == true) {
+            _cargarActividades();
+          }
+        },
+      ),
+    );
+  }
+}
+
+// Pantalla de detalle de actividad para registrarse
+class DetalleActividadScreen extends StatefulWidget {
+  final Map<String, dynamic> actividadData;
+  final Map<String, dynamic> userData;
+  final Map<String, dynamic> huertoData;
+
+  const DetalleActividadScreen({
+    Key? key,
+    required this.actividadData,
+    required this.userData,
+    required this.huertoData,
+  }) : super(key: key);
+
+  @override
+  State<DetalleActividadScreen> createState() => _DetalleActividadScreenState();
+}
+
+class _DetalleActividadScreenState extends State<DetalleActividadScreen> {
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final TextEditingController _horasController = TextEditingController();
+
+  bool _yaRegistrado = false;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _verificarRegistro();
+  }
+
+  // Verificar si el usuario ya está registrado en esta actividad
+  Future<void> _verificarRegistro() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      String uid = widget.userData['uid'];
+      List<dynamic> participantes = widget.actividadData['participantes'] ?? [];
+
+      _yaRegistrado = participantes.any((p) => p['uid'] == uid);
+
+      setState(() {
+        _isLoading = false;
+      });
+    } catch (e) {
+      print('Error al verificar registro: $e');
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  // Registrarse en la actividad
+  Future<void> _registrarseEnActividad() async {
+    String horas = _horasController.text.trim();
+
+    // Validar horas
+    if (horas.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Por favor ingresa las horas de trabajo'),
+          backgroundColor: Colors.orange,
+        ),
+      );
+      return;
+    }
+
+    double? horasNum = double.tryParse(horas);
+    if (horasNum == null || horasNum <= 0 || horasNum > 24) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Por favor ingresa un número válido de horas (1-24)'),
+          backgroundColor: Colors.orange,
+        ),
+      );
+      return;
+    }
+
+    // Confirmar registro
+    bool? confirmar = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Confirmar registro'),
+        content: Text(
+          '¿Deseas registrarte en esta actividad con $horas horas de trabajo?',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancelar'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.green.shade700,
+            ),
+            child: const Text(
+              'Confirmar',
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmar != true) return;
+
+    // Mostrar loading
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const Center(child: CircularProgressIndicator()),
+    );
+
+    try {
+      String uid = widget.userData['uid'];
+      String actividadId = widget.actividadData['id'];
+      String nombreUsuario = widget.userData['nombre'] ?? 'Voluntario';
+      String tipoActividad = widget.actividadData['tipo'] ?? 'Actividad';
+
+      // Crear objeto de participante
+      Map<String, dynamic> participante = {
+        'uid': uid,
+        'nombre': nombreUsuario,
+        'horasComprometidas': horasNum,
+        'fechaRegistro': FieldValue.serverTimestamp(),
+        'estado': 'pendiente', // pendiente, en_proceso, completada
+      };
+
+      // Crear registro de actividad para el historial
+      Map<String, dynamic> registroActividad = {
+        'usuarioId': uid,
+        'actividadId': actividadId,
+        'huertoId': widget.huertoData['id'],
+        'huertoNombre': widget.huertoData['nombre'],
+        'tipoActividad': tipoActividad,
+        'horasComprometidas': horasNum,
+        'fechaRegistro': FieldValue.serverTimestamp(),
+        'estado': 'pendiente',
+      };
+
+      // Batch write
+      WriteBatch batch = _firestore.batch();
+
+      // 1. Agregar participante a la actividad
+      DocumentReference actividadRef = _firestore
+          .collection('actividades')
+          .doc(actividadId);
+      batch.update(actividadRef, {
+        'participantes': FieldValue.arrayUnion([participante]),
+      });
+
+      // 2. Agregar actividad al historial del usuario
+      DocumentReference userRef = _firestore.collection('usuarios').doc(uid);
+      batch.update(userRef, {
+        'actividadesRegistradas': FieldValue.arrayUnion([actividadId]),
+      });
+
+      // 3. Crear registro en colección de registros
+      DocumentReference registroRef = _firestore
+          .collection('registrosActividades')
+          .doc();
+      batch.set(registroRef, registroActividad);
+
+      // Ejecutar operaciones
+      await batch.commit();
+
+      // Cerrar loading
+      Navigator.pop(context);
+
+      // Mostrar éxito
+      await showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.green.shade100,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.check_circle,
+                  size: 60,
+                  color: Colors.green.shade700,
+                ),
+              ),
+              const SizedBox(height: 20),
+              const Text(
+                '¡Registro exitoso!',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                'Te has registrado en la actividad',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 14, color: Colors.grey.shade700),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Horas comprometidas: $horas',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.green.shade700,
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.pop(context, true); // Volver con resultado
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.green.shade700,
+                minimumSize: const Size(double.infinity, 45),
+              ),
+              child: const Text(
+                'Continuar',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    } catch (e) {
+      // Cerrar loading
+      Navigator.pop(context);
+
+      print('Error al registrarse: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error al registrarse: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    String tipo = widget.actividadData['tipo'] ?? 'Sin tipo';
+    String descripcion =
+        widget.actividadData['descripcion'] ?? 'Sin descripción';
+    String huertoNombre = widget.huertoData['nombre'] ?? 'Sin nombre';
+
+    // Mapeo de iconos según tipo de actividad
+    IconData icono;
+    Color color;
+
+    switch (tipo.toLowerCase()) {
+      case 'siembra':
+        icono = Icons.grass;
+        color = Colors.green;
+        break;
+      case 'riego':
+        icono = Icons.water_drop;
+        color = Colors.blue;
+        break;
+      case 'poda':
+        icono = Icons.content_cut;
+        color = Colors.orange;
+        break;
+      case 'limpieza':
+        icono = Icons.cleaning_services;
+        color = Colors.purple;
+        break;
+      case 'cosecha':
+        icono = Icons.shopping_basket;
+        color = Colors.amber;
+        break;
+      default:
+        icono = Icons.assignment;
+        color = Colors.grey;
+    }
+
+    return Scaffold(
+      backgroundColor: Colors.grey.shade50,
+      appBar: AppBar(
+        backgroundColor: Colors.green.shade700,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: const Text(
+          'Detalle de Actividad',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
+      ),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Card principal de la actividad
+                    Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.1),
+                            blurRadius: 10,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        children: [
+                          // Ícono de la actividad
+                          Container(
+                            padding: const EdgeInsets.all(20),
+                            decoration: BoxDecoration(
+                              color: color.withOpacity(0.1),
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(icono, size: 60, color: color),
+                          ),
+                          const SizedBox(height: 20),
+
+                          // Tipo de actividad
+                          Text(
+                            tipo,
+                            style: const TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black87,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 8),
+
+                          // Huerto
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.eco,
+                                size: 16,
+                                color: Colors.grey.shade600,
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                huertoNombre,
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey.shade600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+
+                    // Descripción
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.1),
+                            blurRadius: 5,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Descripción',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black87,
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          Text(
+                            descripcion,
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey.shade700,
+                              height: 1.5,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    // Formulario de registro (solo si no está registrado)
+                    if (!_yaRegistrado) ...[
+                      const SizedBox(height: 24),
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.1),
+                              blurRadius: 5,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Registrarse en esta actividad',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black87,
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            TextField(
+                              controller: _horasController,
+                              keyboardType:
+                                  const TextInputType.numberWithOptions(
+                                    decimal: true,
+                                  ),
+                              decoration: InputDecoration(
+                                labelText: 'Horas de trabajo',
+                                hintText: 'Ej: 2.5',
+                                prefixIcon: const Icon(Icons.access_time),
+                                suffixText: 'horas',
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: BorderSide(
+                                    color: Colors.green.shade700,
+                                    width: 2,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            Text(
+                              'Especifica las horas que dedicarás a esta actividad',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey.shade600,
+                              ),
+                            ),
+                            const SizedBox(height: 20),
+                            SizedBox(
+                              width: double.infinity,
+                              child: ElevatedButton.icon(
+                                onPressed: _registrarseEnActividad,
+                                icon: const Icon(
+                                  Icons.check,
+                                  color: Colors.white,
+                                ),
+                                label: const Text(
+                                  'Registrarme',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.green.shade700,
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 16,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  elevation: 2,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+
+                    // Mensaje de ya registrado
+                    if (_yaRegistrado) ...[
+                      const SizedBox(height: 24),
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.blue.shade50,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: Colors.blue.shade200),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.check_circle,
+                              color: Colors.blue.shade700,
+                              size: 28,
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                'Ya estás registrado en esta actividad',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.blue.shade700,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _horasController.dispose();
+    super.dispose();
+  }
+}
+
 class CrearHuertoScreen extends StatefulWidget {
   final Map<String, dynamic> userData;
 
@@ -2254,12 +4144,12 @@ class CrearHuertoScreen extends StatefulWidget {
 class _CrearHuertoScreenState extends State<CrearHuertoScreen> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final _formKey = GlobalKey<FormState>();
-  
+
   final nombreController = TextEditingController();
   final tamanoController = TextEditingController();
   final direccionController = TextEditingController();
   final descripcionController = TextEditingController();
-  
+
   String tipoCultivoSeleccionado = 'Hortalizas';
   String estadoSeleccionado = 'Activo';
   bool _isLoading = false;
@@ -2292,7 +4182,7 @@ class _CrearHuertoScreenState extends State<CrearHuertoScreen> {
 
     try {
       String uid = widget.userData['uid'];
-      
+
       // Crear documento del huerto en Firestore
       DocumentReference huertoRef = await _firestore.collection('huertos').add({
         'nombre': nombreController.text.trim(),
@@ -2320,7 +4210,9 @@ class _CrearHuertoScreenState extends State<CrearHuertoScreen> {
       // Mostrar mensaje de éxito
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('¡Huerto "${nombreController.text}" creado exitosamente!'),
+          content: Text(
+            '¡Huerto "${nombreController.text}" creado exitosamente!',
+          ),
           backgroundColor: Colors.green,
           duration: const Duration(seconds: 3),
         ),
@@ -2328,7 +4220,6 @@ class _CrearHuertoScreenState extends State<CrearHuertoScreen> {
 
       // Regresar a la pantalla anterior
       Navigator.pop(context, true); // true indica que se creó un huerto
-
     } catch (e) {
       setState(() {
         _isLoading = false;
@@ -2537,7 +4428,8 @@ class _CrearHuertoScreenState extends State<CrearHuertoScreen> {
                   maxLines: 4,
                   decoration: InputDecoration(
                     labelText: 'Descripción (Opcional)',
-                    hintText: 'Describe las características especiales del huerto...',
+                    hintText:
+                        'Describe las características especiales del huerto...',
                     prefixIcon: const Icon(Icons.description),
                     alignLabelWithHint: true,
                     border: OutlineInputBorder(
@@ -2707,7 +4599,10 @@ class _DetalleHuertoScreenState extends State<DetalleHuertoScreen> {
         ),
         title: Text(
           nombre,
-          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         actions: [
           IconButton(
@@ -2737,7 +4632,10 @@ class _DetalleHuertoScreenState extends State<DetalleHuertoScreen> {
                       width: double.infinity,
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
-                          colors: [Colors.green.shade700, Colors.green.shade500],
+                          colors: [
+                            Colors.green.shade700,
+                            Colors.green.shade500,
+                          ],
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
                         ),
@@ -2854,11 +4752,23 @@ class _DetalleHuertoScreenState extends State<DetalleHuertoScreen> {
                             ),
                             child: Column(
                               children: [
-                                _buildInfoRow(Icons.straighten, 'Tamaño', tamano),
+                                _buildInfoRow(
+                                  Icons.straighten,
+                                  'Tamaño',
+                                  tamano,
+                                ),
                                 const Divider(height: 24),
-                                _buildInfoRow(Icons.location_on, 'Dirección', direccion),
+                                _buildInfoRow(
+                                  Icons.location_on,
+                                  'Dirección',
+                                  direccion,
+                                ),
                                 const Divider(height: 24),
-                                _buildInfoRow(Icons.grass, 'Tipo de Cultivo', tipoCultivo),
+                                _buildInfoRow(
+                                  Icons.grass,
+                                  'Tipo de Cultivo',
+                                  tipoCultivo,
+                                ),
                               ],
                             ),
                           ),
@@ -2890,7 +4800,9 @@ class _DetalleHuertoScreenState extends State<DetalleHuertoScreen> {
                               ],
                             ),
                             child: Text(
-                              descripcion.isEmpty ? 'Sin descripción' : descripcion,
+                              descripcion.isEmpty
+                                  ? 'Sin descripción'
+                                  : descripcion,
                               style: TextStyle(
                                 fontSize: 15,
                                 color: Colors.grey.shade700,
@@ -2923,10 +4835,11 @@ class _DetalleHuertoScreenState extends State<DetalleHuertoScreen> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => GestionarActividadesScreen(
-                                    huertoData: huerto,
-                                    userData: widget.userData,
-                                  ),
+                                  builder: (context) =>
+                                      GestionarActividadesScreen(
+                                        huertoData: huerto,
+                                        userData: widget.userData,
+                                      ),
                                 ),
                               );
                             },
@@ -2945,10 +4858,11 @@ class _DetalleHuertoScreenState extends State<DetalleHuertoScreen> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => GestionarActividadesScreen(
-                                    huertoData: huerto,
-                                    userData: widget.userData,
-                                  ),
+                                  builder: (context) =>
+                                      GestionarActividadesScreen(
+                                        huertoData: huerto,
+                                        userData: widget.userData,
+                                      ),
                                 ),
                               );
                             },
@@ -2967,10 +4881,11 @@ class _DetalleHuertoScreenState extends State<DetalleHuertoScreen> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => AsignarVoluntariosScreen(
-                                    huertoData: huerto,
-                                    userData: widget.userData,
-                                  ),
+                                  builder: (context) =>
+                                      AsignarVoluntariosScreen(
+                                        huertoData: huerto,
+                                        userData: widget.userData,
+                                      ),
                                 ),
                               );
                             },
@@ -2982,7 +4897,8 @@ class _DetalleHuertoScreenState extends State<DetalleHuertoScreen> {
                             context,
                             icon: Icons.group,
                             title: 'Ver Lista de Voluntarios',
-                            subtitle: '${voluntarios.length} voluntarios registrados',
+                            subtitle:
+                                '${voluntarios.length} voluntarios registrados',
                             color: Colors.purple,
                             onTap: () {
                               //Ver lista de voluntarios
@@ -3009,7 +4925,12 @@ class _DetalleHuertoScreenState extends State<DetalleHuertoScreen> {
   }
 
   // Widget para card de estadística
-  Widget _buildStatCard(IconData icon, String value, String label, Color color) {
+  Widget _buildStatCard(
+    IconData icon,
+    String value,
+    String label,
+    Color color,
+  ) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -3046,10 +4967,7 @@ class _DetalleHuertoScreenState extends State<DetalleHuertoScreen> {
           Text(
             label,
             textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 12,
-              color: Colors.grey.shade600,
-            ),
+            style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
           ),
         ],
       ),
@@ -3066,11 +4984,7 @@ class _DetalleHuertoScreenState extends State<DetalleHuertoScreen> {
             color: Colors.green.shade50,
             borderRadius: BorderRadius.circular(10),
           ),
-          child: Icon(
-            icon,
-            color: Colors.green.shade700,
-            size: 22,
-          ),
+          child: Icon(icon, color: Colors.green.shade700, size: 22),
         ),
         const SizedBox(width: 16),
         Expanded(
@@ -3153,10 +5067,7 @@ class _DetalleHuertoScreenState extends State<DetalleHuertoScreen> {
                   const SizedBox(height: 4),
                   Text(
                     subtitle,
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: Colors.grey.shade600,
-                    ),
+                    style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
                   ),
                 ],
               ),
@@ -3213,8 +5124,7 @@ class _GestionarActividadesScreenState
           .get();
 
       _actividades = snapshot.docs
-          .map((doc) =>
-              {...doc.data() as Map<String, dynamic>, 'id': doc.id})
+          .map((doc) => {...doc.data() as Map<String, dynamic>, 'id': doc.id})
           .toList();
     } catch (e) {
       print('Error al cargar actividades: $e');
@@ -3469,11 +5379,7 @@ class _GestionarActividadesScreenState
                 ],
                 Row(
                   children: [
-                    Icon(
-                      Icons.person,
-                      size: 16,
-                      color: Colors.grey.shade600,
-                    ),
+                    Icon(Icons.person, size: 16, color: Colors.grey.shade600),
                     const SizedBox(width: 6),
                     Text(
                       '${voluntariosAsignados.length} voluntarios asignados',
@@ -3526,10 +5432,7 @@ class _GestionarActividadesScreenState
                         ),
                         label: const Text(
                           'Cambiar Estado',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 12,
-                          ),
+                          style: TextStyle(color: Colors.white, fontSize: 12),
                         ),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.green.shade700,
@@ -3562,9 +5465,18 @@ class _GestionarActividadesScreenState
             mainAxisSize: MainAxisSize.min,
             children: [
               _buildDetailRow('Tipo', actividad['tipo'] ?? 'No especificado'),
-              _buildDetailRow('Fecha', actividad['fechaFormateada'] ?? 'No especificada'),
-              _buildDetailRow('Estado', _getEstadoTexto(actividad['estado'] ?? 'pendiente')),
-              _buildDetailRow('Voluntarios', '${(actividad['voluntariosAsignados'] ?? []).length}'),
+              _buildDetailRow(
+                'Fecha',
+                actividad['fechaFormateada'] ?? 'No especificada',
+              ),
+              _buildDetailRow(
+                'Estado',
+                _getEstadoTexto(actividad['estado'] ?? 'pendiente'),
+              ),
+              _buildDetailRow(
+                'Voluntarios',
+                '${(actividad['voluntariosAsignados'] ?? []).length}',
+              ),
               if (actividad['descripcion'] != null &&
                   actividad['descripcion'].isNotEmpty) ...[
                 const SizedBox(height: 12),
@@ -3875,26 +5787,30 @@ class _CrearActividadScreenState extends State<CrearActividadScreen> {
       }
 
       // Crear actividad en Firestore
-      DocumentReference actividadRef =
-          await _firestore.collection('actividades').add({
-        'titulo': tituloController.text.trim(),
-        'descripcion': descripcionController.text.trim(),
-        'tipo': tipoSeleccionado.toLowerCase(),
-        'fecha': Timestamp.fromDate(fechaCompleta),
-        'fechaFormateada': fechaFormateada,
-        'estado': 'pendiente',
-        'huertoId': widget.huertoData['id'],
-        'huertoNombre': widget.huertoData['nombre'],
-        'creadorId': widget.userData['uid'],
-        'creadorNombre': widget.userData['nombre'],
-        'fechaCreacion': FieldValue.serverTimestamp(),
-        'voluntariosAsignados': [],
-      });
+      DocumentReference actividadRef = await _firestore
+          .collection('actividades')
+          .add({
+            'titulo': tituloController.text.trim(),
+            'descripcion': descripcionController.text.trim(),
+            'tipo': tipoSeleccionado.toLowerCase(),
+            'fecha': Timestamp.fromDate(fechaCompleta),
+            'fechaFormateada': fechaFormateada,
+            'estado': 'pendiente',
+            'huertoId': widget.huertoData['id'],
+            'huertoNombre': widget.huertoData['nombre'],
+            'creadorId': widget.userData['uid'],
+            'creadorNombre': widget.userData['nombre'],
+            'fechaCreacion': FieldValue.serverTimestamp(),
+            'voluntariosAsignados': [],
+          });
 
       // Actualizar el huerto con la nueva actividad
-      await _firestore.collection('huertos').doc(widget.huertoData['id']).update({
-        'actividades': FieldValue.arrayUnion([actividadRef.id]),
-      });
+      await _firestore
+          .collection('huertos')
+          .doc(widget.huertoData['id'])
+          .update({
+            'actividades': FieldValue.arrayUnion([actividadRef.id]),
+          });
 
       setState(() {
         _isLoading = false;
@@ -3902,7 +5818,9 @@ class _CrearActividadScreenState extends State<CrearActividadScreen> {
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('¡Actividad "${tituloController.text}" creada exitosamente!'),
+          content: Text(
+            '¡Actividad "${tituloController.text}" creada exitosamente!',
+          ),
           backgroundColor: Colors.green,
           duration: const Duration(seconds: 3),
         ),
@@ -3959,11 +5877,7 @@ class _CrearActividadScreenState extends State<CrearActividadScreen> {
                   ),
                   child: Row(
                     children: [
-                      Icon(
-                        Icons.eco,
-                        color: Colors.green.shade700,
-                        size: 24,
-                      ),
+                      Icon(Icons.eco, color: Colors.green.shade700, size: 24),
                       const SizedBox(width: 12),
                       Expanded(
                         child: Column(
@@ -4120,10 +6034,7 @@ class _CrearActividadScreenState extends State<CrearActividadScreen> {
                     ),
                     child: Row(
                       children: [
-                        Icon(
-                          Icons.access_time,
-                          color: Colors.green.shade700,
-                        ),
+                        Icon(Icons.access_time, color: Colors.green.shade700),
                         const SizedBox(width: 16),
                         Expanded(
                           child: Column(
@@ -4278,7 +6189,7 @@ class AsignarVoluntariosScreen extends StatefulWidget {
 class _AsignarVoluntariosScreenState extends State<AsignarVoluntariosScreen> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final TextEditingController _searchController = TextEditingController();
-  
+
   bool _isLoading = true;
   List<Map<String, dynamic>> _todosVoluntarios = [];
   List<Map<String, dynamic>> _voluntariosFiltrados = [];
@@ -4303,7 +6214,8 @@ class _AsignarVoluntariosScreenState extends State<AsignarVoluntariosScreen> {
           .get();
 
       if (huertoDoc.exists) {
-        List voluntarios = (huertoDoc.data() as Map<String, dynamic>)['voluntarios'] ?? [];
+        List voluntarios =
+            (huertoDoc.data() as Map<String, dynamic>)['voluntarios'] ?? [];
         _voluntariosAsignados = voluntarios.cast<String>();
       }
 
@@ -4314,10 +6226,7 @@ class _AsignarVoluntariosScreenState extends State<AsignarVoluntariosScreen> {
           .get();
 
       _todosVoluntarios = snapshot.docs
-          .map((doc) => {
-                ...doc.data() as Map<String, dynamic>,
-                'uid': doc.id,
-              })
+          .map((doc) => {...doc.data() as Map<String, dynamic>, 'uid': doc.id})
           .toList();
 
       _voluntariosFiltrados = _todosVoluntarios;
@@ -4360,9 +6269,12 @@ class _AsignarVoluntariosScreenState extends State<AsignarVoluntariosScreen> {
 
     try {
       // Agregar voluntario al huerto
-      await _firestore.collection('huertos').doc(widget.huertoData['id']).update({
-        'voluntarios': FieldValue.arrayUnion([uid]),
-      });
+      await _firestore
+          .collection('huertos')
+          .doc(widget.huertoData['id'])
+          .update({
+            'voluntarios': FieldValue.arrayUnion([uid]),
+          });
 
       // Agregar huerto al voluntario
       await _firestore.collection('usuarios').doc(uid).update({
@@ -4407,10 +6319,7 @@ class _AsignarVoluntariosScreenState extends State<AsignarVoluntariosScreen> {
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text(
-              'Remover',
-              style: TextStyle(color: Colors.red),
-            ),
+            child: const Text('Remover', style: TextStyle(color: Colors.red)),
           ),
         ],
       ),
@@ -4420,9 +6329,12 @@ class _AsignarVoluntariosScreenState extends State<AsignarVoluntariosScreen> {
 
     try {
       // Remover voluntario del huerto
-      await _firestore.collection('huertos').doc(widget.huertoData['id']).update({
-        'voluntarios': FieldValue.arrayRemove([uid]),
-      });
+      await _firestore
+          .collection('huertos')
+          .doc(widget.huertoData['id'])
+          .update({
+            'voluntarios': FieldValue.arrayRemove([uid]),
+          });
 
       // Remover huerto del voluntario
       await _firestore.collection('usuarios').doc(uid).update({
@@ -4486,10 +6398,7 @@ class _AsignarVoluntariosScreenState extends State<AsignarVoluntariosScreen> {
                     children: [
                       const Text(
                         'Huerto',
-                        style: TextStyle(
-                          color: Colors.white70,
-                          fontSize: 14,
-                        ),
+                        style: TextStyle(color: Colors.white70, fontSize: 14),
                       ),
                       const SizedBox(height: 4),
                       Text(
@@ -4576,11 +6485,7 @@ class _AsignarVoluntariosScreenState extends State<AsignarVoluntariosScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.people_outline,
-            size: 80,
-            color: Colors.grey.shade400,
-          ),
+          Icon(Icons.people_outline, size: 80, color: Colors.grey.shade400),
           const SizedBox(height: 16),
           Text(
             _searchController.text.isNotEmpty
@@ -4597,10 +6502,7 @@ class _AsignarVoluntariosScreenState extends State<AsignarVoluntariosScreen> {
             _searchController.text.isNotEmpty
                 ? 'Intenta con otra búsqueda'
                 : 'Aún no hay voluntarios registrados',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey.shade500,
-            ),
+            style: TextStyle(fontSize: 14, color: Colors.grey.shade500),
           ),
         ],
       ),
@@ -4637,9 +6539,7 @@ class _AsignarVoluntariosScreenState extends State<AsignarVoluntariosScreen> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: yaAsignado
-                  ? Colors.green.shade50
-                  : Colors.grey.shade50,
+              color: yaAsignado ? Colors.green.shade50 : Colors.grey.shade50,
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(16),
                 topRight: Radius.circular(16),
@@ -4771,19 +6671,12 @@ class _AsignarVoluntariosScreenState extends State<AsignarVoluntariosScreen> {
   Widget _buildInfoRow(IconData icon, String text) {
     return Row(
       children: [
-        Icon(
-          icon,
-          size: 16,
-          color: Colors.grey.shade600,
-        ),
+        Icon(icon, size: 16, color: Colors.grey.shade600),
         const SizedBox(width: 8),
         Expanded(
           child: Text(
             text,
-            style: TextStyle(
-              fontSize: 13,
-              color: Colors.grey.shade700,
-            ),
+            style: TextStyle(fontSize: 13, color: Colors.grey.shade700),
             overflow: TextOverflow.ellipsis,
           ),
         ),
@@ -4836,7 +6729,7 @@ class _ListaVoluntariosScreenState extends State<ListaVoluntariosScreen> {
           .get();
 
       if (huertoDoc.exists) {
-        List<String> voluntariosIds = 
+        List<String> voluntariosIds =
             ((huertoDoc.data() as Map<String, dynamic>)['voluntarios'] ?? [])
                 .cast<String>();
 
@@ -4851,8 +6744,10 @@ class _ListaVoluntariosScreenState extends State<ListaVoluntariosScreen> {
         // Obtener datos de cada voluntario
         List<Map<String, dynamic>> voluntariosData = [];
         for (String uid in voluntariosIds) {
-          DocumentSnapshot userDoc =
-              await _firestore.collection('usuarios').doc(uid).get();
+          DocumentSnapshot userDoc = await _firestore
+              .collection('usuarios')
+              .doc(uid)
+              .get();
 
           if (userDoc.exists) {
             voluntariosData.add({
@@ -4898,10 +6793,7 @@ class _ListaVoluntariosScreenState extends State<ListaVoluntariosScreen> {
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text(
-              'Remover',
-              style: TextStyle(color: Colors.red),
-            ),
+            child: const Text('Remover', style: TextStyle(color: Colors.red)),
           ),
         ],
       ),
@@ -4915,13 +6807,12 @@ class _ListaVoluntariosScreenState extends State<ListaVoluntariosScreen> {
           .collection('huertos')
           .doc(widget.huertoData['id'])
           .update({
-        'voluntarios': FieldValue.arrayRemove([uid]),
-      });
+            'voluntarios': FieldValue.arrayRemove([uid]),
+          });
 
       // Remover huerto del voluntario
       await _firestore.collection('usuarios').doc(uid).update({
-        'huertosRegistrados':
-            FieldValue.arrayRemove([widget.huertoData['id']]),
+        'huertosRegistrados': FieldValue.arrayRemove([widget.huertoData['id']]),
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -4982,13 +6873,21 @@ class _ListaVoluntariosScreenState extends State<ListaVoluntariosScreen> {
             mainAxisSize: MainAxisSize.min,
             children: [
               _buildDetailRow(
-                  'Correo', voluntario['correo'] ?? 'No especificado'),
+                'Correo',
+                voluntario['correo'] ?? 'No especificado',
+              ),
               _buildDetailRow(
-                  'Teléfono', voluntario['telefono'] ?? 'No especificado'),
+                'Teléfono',
+                voluntario['telefono'] ?? 'No especificado',
+              ),
               _buildDetailRow(
-                  'Dirección', voluntario['direccion'] ?? 'No especificada'),
-              _buildDetailRow('Horario disponible',
-                  voluntario['horario'] ?? 'No especificado'),
+                'Dirección',
+                voluntario['direccion'] ?? 'No especificada',
+              ),
+              _buildDetailRow(
+                'Horario disponible',
+                voluntario['horario'] ?? 'No especificado',
+              ),
               const SizedBox(height: 12),
               const Divider(),
               const SizedBox(height: 8),
@@ -5000,10 +6899,14 @@ class _ListaVoluntariosScreenState extends State<ListaVoluntariosScreen> {
                 ),
               ),
               const SizedBox(height: 8),
-              _buildDetailRow('Actividades completadas',
-                  '${(voluntario['actividadesCompletadas'] ?? []).length}'),
-              _buildDetailRow('Huertos registrados',
-                  '${(voluntario['huertosRegistrados'] ?? []).length}'),
+              _buildDetailRow(
+                'Actividades completadas',
+                '${(voluntario['actividadesCompletadas'] ?? []).length}',
+              ),
+              _buildDetailRow(
+                'Huertos registrados',
+                '${(voluntario['huertosRegistrados'] ?? []).length}',
+              ),
             ],
           ),
         ),
@@ -5034,10 +6937,7 @@ class _ListaVoluntariosScreenState extends State<ListaVoluntariosScreen> {
             ),
           ),
           Expanded(
-            child: Text(
-              value,
-              style: const TextStyle(color: Colors.black87),
-            ),
+            child: Text(value, style: const TextStyle(color: Colors.black87)),
           ),
         ],
       ),
@@ -5094,7 +6994,7 @@ class _ListaVoluntariosScreenState extends State<ListaVoluntariosScreen> {
                             gradient: LinearGradient(
                               colors: [
                                 Colors.green.shade700,
-                                Colors.green.shade500
+                                Colors.green.shade500,
                               ],
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
@@ -5161,8 +7061,9 @@ class _ListaVoluntariosScreenState extends State<ListaVoluntariosScreen> {
                             itemBuilder: (context, index) {
                               return Padding(
                                 padding: const EdgeInsets.only(bottom: 12),
-                                child:
-                                    _buildVoluntarioCard(_voluntarios[index]),
+                                child: _buildVoluntarioCard(
+                                  _voluntarios[index],
+                                ),
                               );
                             },
                           ),
@@ -5379,10 +7280,7 @@ class _ListaVoluntariosScreenState extends State<ListaVoluntariosScreen> {
                         ),
                         label: const Text(
                           'Remover',
-                          style: TextStyle(
-                            color: Colors.red,
-                            fontSize: 13,
-                          ),
+                          style: TextStyle(color: Colors.red, fontSize: 13),
                         ),
                         style: OutlinedButton.styleFrom(
                           side: const BorderSide(color: Colors.red),
@@ -5406,19 +7304,12 @@ class _ListaVoluntariosScreenState extends State<ListaVoluntariosScreen> {
   Widget _buildInfoRow(IconData icon, String text) {
     return Row(
       children: [
-        Icon(
-          icon,
-          size: 16,
-          color: Colors.grey.shade600,
-        ),
+        Icon(icon, size: 16, color: Colors.grey.shade600),
         const SizedBox(width: 8),
         Expanded(
           child: Text(
             text,
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey.shade700,
-            ),
+            style: TextStyle(fontSize: 14, color: Colors.grey.shade700),
             overflow: TextOverflow.ellipsis,
           ),
         ),
