@@ -8,7 +8,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'firebase_options.dart';
 import 'contenido/jardineria101.dart';
 import 'contenido/jardineriaintermedia.dart';
-import 'contenido/jardineriaavanzada.dart'; 
+import 'contenido/jardineriaavanzada.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -342,50 +342,52 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _isPasswordVisible = false;
   bool _isLoading = false; // NUEVO
 
-  //Método para iniciar sesión
   Future<void> _iniciarSesion() async {
     String correo = correoController.text.trim();
     String password = passwordController.text.trim();
 
-    //Validación de campo vacío
+    // Validación de campos vacíos
     if (correo.isEmpty || password.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Por favor completa todos los campos'),
           backgroundColor: Colors.red,
+          duration: Duration(seconds: 3),
         ),
       );
       return;
     }
 
-    //Validación de correo
-    if (!correo.contains('@')) {
+    // Validación de formato de correo
+    if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(correo)) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Por favor ingresa un correo válido'),
+          content: Text('Por favor ingresa un correo electrónico válido'),
           backgroundColor: Colors.orange,
+          duration: Duration(seconds: 3),
         ),
       );
       return;
     }
 
-    //Validación de contraseña local
+    // Validación de longitud mínima de contraseña
     if (password.length < 6) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('La contraseña debe tener al menos 6 caracteres'),
           backgroundColor: Colors.orange,
+          duration: Duration(seconds: 3),
         ),
       );
       return;
     }
 
-    //Mostrar loading
+    // Mostrar loading
     setState(() {
       _isLoading = true;
     });
 
-    //Iniciar sesión en firebase
+    // Iniciar sesión en Firebase
     Map<String, dynamic> resultado = await _authService.iniciarSesion(
       correo: correo,
       password: password,
@@ -395,9 +397,9 @@ class _LoginScreenState extends State<LoginScreen> {
       _isLoading = false;
     });
 
-    //Mostrar resultado
+    // Mostrar resultado
     if (resultado['success']) {
-      //Navegar a la pantalla principal
+      // Navegar a la pantalla principal
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
@@ -684,68 +686,159 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   final List<String> tiposUsuario = ['Voluntario', 'Administrador'];
 
-  //Método para registrar usuario
   Future<void> _registrarUsuario() async {
     // Validación de campos vacíos
-    if (nombreController.text.isEmpty ||
-        userController.text.isEmpty ||
-        correoController.text.isEmpty ||
-        telefonoController.text.isEmpty ||
-        direccionController.text.isEmpty ||
+    if (nombreController.text.trim().isEmpty ||
+        userController.text.trim().isEmpty ||
+        correoController.text.trim().isEmpty ||
+        telefonoController.text.trim().isEmpty ||
+        direccionController.text.trim().isEmpty ||
         passwordController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Por favor completa todos los campos'),
           backgroundColor: Colors.red,
+          duration: Duration(seconds: 3),
         ),
       );
       return;
     }
 
-    //Validación de correo
-    if (!correoController.text.contains('@')) {
+    // Validación de nombre (mínimo 3 caracteres, solo letras y espacios)
+    String nombre = nombreController.text.trim();
+    if (nombre.length < 3) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Por favor ingresa un correo válido'),
+          content: Text('El nombre debe tener al menos 3 caracteres'),
           backgroundColor: Colors.orange,
+          duration: Duration(seconds: 3),
         ),
       );
       return;
     }
 
-    //Validación de contraseña
-    if (passwordController.text.length < 6) {
+    if (!RegExp(r'^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$').hasMatch(nombre)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('El nombre solo puede contener letras y espacios'),
+          backgroundColor: Colors.orange,
+          duration: Duration(seconds: 3),
+        ),
+      );
+      return;
+    }
+
+    // Validación de usuario (mínimo 3 caracteres, sin espacios)
+    String usuario = userController.text.trim();
+    if (usuario.length < 3) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('El usuario debe tener al menos 3 caracteres'),
+          backgroundColor: Colors.orange,
+          duration: Duration(seconds: 3),
+        ),
+      );
+      return;
+    }
+
+    if (usuario.contains(' ')) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('El usuario no puede contener espacios'),
+          backgroundColor: Colors.orange,
+          duration: Duration(seconds: 3),
+        ),
+      );
+      return;
+    }
+
+    // Validación de correo (formato válido)
+    String correo = correoController.text.trim();
+    if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(correo)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Por favor ingresa un correo electrónico válido'),
+          backgroundColor: Colors.orange,
+          duration: Duration(seconds: 3),
+        ),
+      );
+      return;
+    }
+
+    // Validación de teléfono (solo números, 7-15 dígitos)
+    String telefono = telefonoController.text.trim();
+    if (!RegExp(r'^[0-9]{7,15}$').hasMatch(telefono)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('El teléfono debe contener entre 7 y 15 dígitos'),
+          backgroundColor: Colors.orange,
+          duration: Duration(seconds: 3),
+        ),
+      );
+      return;
+    }
+
+    // Validación de dirección (mínimo 5 caracteres)
+    String direccion = direccionController.text.trim();
+    if (direccion.length < 5) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('La dirección debe tener al menos 5 caracteres'),
+          backgroundColor: Colors.orange,
+          duration: Duration(seconds: 3),
+        ),
+      );
+      return;
+    }
+
+    // Validación de contraseña (mínimo 6 caracteres, con letra y número)
+    String password = passwordController.text;
+    if (password.length < 6) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('La contraseña debe tener al menos 6 caracteres'),
           backgroundColor: Colors.orange,
+          duration: Duration(seconds: 3),
         ),
       );
       return;
     }
 
-    //Mostrar loading
+    if (!RegExp(r'^(?=.*[A-Za-z])(?=.*\d)').hasMatch(password)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'La contraseña debe contener al menos una letra y un número',
+          ),
+          backgroundColor: Colors.orange,
+          duration: Duration(seconds: 3),
+        ),
+      );
+      return;
+    }
+
+    // Mostrar loading
     setState(() {
       _isLoading = true;
     });
 
-    //Registrar en Firebase
+    // Registrar en Firebase
     Map<String, dynamic> resultado = await _authService.registrarUsuario(
-      nombre: nombreController.text.trim(),
-      usuario: userController.text.trim(),
-      correo: correoController.text.trim(),
-      telefono: telefonoController.text.trim(),
-      direccion: direccionController.text.trim(),
+      nombre: nombre,
+      usuario: usuario,
+      correo: correo,
+      telefono: telefono,
+      direccion: direccion,
       horario: horarioSeleccionado,
       tipoUsuario: tipoUsuario,
-      password: passwordController.text,
+      password: password,
     );
 
     setState(() {
       _isLoading = false;
     });
 
-    //Mostrar resultado
+    // Mostrar resultado
     if (resultado['success']) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -754,12 +847,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
           duration: const Duration(seconds: 3),
         ),
       );
-      //Volver al login
+      // Volver al login
       Navigator.pop(context);
     } else {
-      //Imprimir en consola para debug
       print('Error detallado: ${resultado['message']}');
-
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(resultado['message']),
@@ -1056,7 +1147,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
 class EstadisticasScreen extends StatefulWidget {
   final Map<String, dynamic> userData;
 
-  const EstadisticasScreen({Key? key, required this.userData}) : super(key: key);
+  const EstadisticasScreen({Key? key, required this.userData})
+    : super(key: key);
 
   @override
   State<EstadisticasScreen> createState() => _EstadisticasScreenState();
@@ -1064,9 +1156,9 @@ class EstadisticasScreen extends StatefulWidget {
 
 class _EstadisticasScreenState extends State<EstadisticasScreen> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  
+
   bool _isLoading = true;
-  
+
   // Variables para almacenar los datos de las estadísticas
   Map<String, int> _participacionPorHuerto = {};
   int _totalHorasAcumuladas = 0;
@@ -1096,159 +1188,163 @@ class _EstadisticasScreenState extends State<EstadisticasScreen> {
     });
   }
 
-Future<void> _cargarParticipacionPorHuerto() async {
-  try {
-    Map<String, int> participacion = {};
-    
-    // Obtener todos los huertos activos
-    QuerySnapshot huertosSnapshot = await _firestore
-        .collection('huertos')
-        .where('estado', isEqualTo: 'activo')
-        .get();
+  Future<void> _cargarParticipacionPorHuerto() async {
+    try {
+      Map<String, int> participacion = {};
 
-    // Contar voluntarios por cada huerto
-    for (var doc in huertosSnapshot.docs) {
-      Map<String, dynamic> huertoData = doc.data() as Map<String, dynamic>;
-      String nombreHuerto = huertoData['nombre'] ?? 'Sin nombre';
-      List voluntarios = huertoData['voluntarios'] ?? [];
-      
-      participacion[nombreHuerto] = voluntarios.length;
-    }
-
-    setState(() {
-      _participacionPorHuerto = participacion;
-    });
-  } catch (e) {
-    print('Error al cargar participación: $e');
-    // Si hay error, mantener datos de ejemplo
-    _participacionPorHuerto = {
-      'Huerto Ejemplo 1': 5,
-      'Huerto Ejemplo 2': 3,
-      'Huerto Ejemplo 3': 8,
-    };
-  }
-}
-
-// Cargar horas acumuladas según tipo de usuario
-Future<void> _cargarHorasAcumuladas() async {
-  try {
-    int totalHoras = 0;
-    String tipoUsuario = widget.userData['tipoUsuario'] ?? 'Voluntario';
-    String uid = widget.userData['uid'];
-
-    if (tipoUsuario == 'Administrador') {
-      // Contar horas solo de actividades completadas en sus huertos (admin)
+      // Obtener todos los huertos activos
       QuerySnapshot huertosSnapshot = await _firestore
           .collection('huertos')
-          .where('creadorId', isEqualTo: uid)
+          .where('estado', isEqualTo: 'activo')
           .get();
 
-      List<String> huertosIds = huertosSnapshot.docs.map((doc) => doc.id).toList();
+      // Contar voluntarios por cada huerto
+      for (var doc in huertosSnapshot.docs) {
+        Map<String, dynamic> huertoData = doc.data() as Map<String, dynamic>;
+        String nombreHuerto = huertoData['nombre'] ?? 'Sin nombre';
+        List voluntarios = huertoData['voluntarios'] ?? [];
 
-      if (huertosIds.isNotEmpty) {
-        // Obtener todas las actividades de esos huertos
-        QuerySnapshot actividadesSnapshot = await _firestore
-            .collection('actividades')
-            .where('huertoId', whereIn: huertosIds)
+        participacion[nombreHuerto] = voluntarios.length;
+      }
+
+      setState(() {
+        _participacionPorHuerto = participacion;
+      });
+    } catch (e) {
+      print('Error al cargar participación: $e');
+      // Si hay error, mantener datos de ejemplo
+      _participacionPorHuerto = {
+        'Huerto Ejemplo 1': 5,
+        'Huerto Ejemplo 2': 3,
+        'Huerto Ejemplo 3': 8,
+      };
+    }
+  }
+
+  // Cargar horas acumuladas según tipo de usuario
+  Future<void> _cargarHorasAcumuladas() async {
+    try {
+      int totalHoras = 0;
+      String tipoUsuario = widget.userData['tipoUsuario'] ?? 'Voluntario';
+      String uid = widget.userData['uid'];
+
+      if (tipoUsuario == 'Administrador') {
+        // Contar horas solo de actividades completadas en sus huertos (admin)
+        QuerySnapshot huertosSnapshot = await _firestore
+            .collection('huertos')
+            .where('creadorId', isEqualTo: uid)
             .get();
 
-        // Sumar las horas solo de voluntarios que se hayan completado
+        List<String> huertosIds = huertosSnapshot.docs
+            .map((doc) => doc.id)
+            .toList();
+
+        if (huertosIds.isNotEmpty) {
+          // Obtener todas las actividades de esos huertos
+          QuerySnapshot actividadesSnapshot = await _firestore
+              .collection('actividades')
+              .where('huertoId', whereIn: huertosIds)
+              .get();
+
+          // Sumar las horas solo de voluntarios que se hayan completado
+          for (var doc in actividadesSnapshot.docs) {
+            Map<String, dynamic> actividad = doc.data() as Map<String, dynamic>;
+            List<dynamic> participantes = actividad['participantes'] ?? [];
+
+            for (var participante in participantes) {
+              String estadoParticipante = participante['estado'] ?? 'pendiente';
+
+              // solo sumar si está completada
+              if (estadoParticipante == 'completada') {
+                double horas = (participante['horasComprometidas'] ?? 0)
+                    .toDouble();
+                totalHoras += horas.toInt();
+              }
+            }
+          }
+        }
+      } else {
+        // Para voluntario: contar SOLO sus horas de actividades completadas
+        QuerySnapshot actividadesSnapshot = await _firestore
+            .collection('actividades')
+            .get();
+
         for (var doc in actividadesSnapshot.docs) {
           Map<String, dynamic> actividad = doc.data() as Map<String, dynamic>;
           List<dynamic> participantes = actividad['participantes'] ?? [];
 
-          for (var participante in participantes) {
-            String estadoParticipante = participante['estado'] ?? 'pendiente';
-            
-            // solo sumar si está completada
-            if (estadoParticipante == 'completada') {
-              double horas = (participante['horasComprometidas'] ?? 0).toDouble();
+          // Buscar si el usuario está en los participantes
+          var miParticipacion = participantes.firstWhere(
+            (p) => p['uid'] == uid,
+            orElse: () => null,
+          );
+
+          if (miParticipacion != null) {
+            String miEstado = miParticipacion['estado'] ?? 'pendiente';
+
+            // SOLO sumar si está completada
+            if (miEstado == 'completada') {
+              double horas = (miParticipacion['horasComprometidas'] ?? 0)
+                  .toDouble();
               totalHoras += horas.toInt();
             }
           }
         }
       }
-    } else {
-      // Para voluntario: contar SOLO sus horas de actividades completadas
-      QuerySnapshot actividadesSnapshot = await _firestore
-          .collection('actividades')
+
+      setState(() {
+        _totalHorasAcumuladas = totalHoras;
+      });
+    } catch (e) {
+      print('Error al cargar horas acumuladas: $e');
+      _totalHorasAcumuladas = 0;
+    }
+  }
+
+  Future<void> _cargarHuertosPopulares() async {
+    try {
+      List<Map<String, dynamic>> huertosList = [];
+
+      // Obtener todos los huertos activos
+      QuerySnapshot huertosSnapshot = await _firestore
+          .collection('huertos')
+          .where('estado', isEqualTo: 'activo')
           .get();
 
-      for (var doc in actividadesSnapshot.docs) {
-        Map<String, dynamic> actividad = doc.data() as Map<String, dynamic>;
-        List<dynamic> participantes = actividad['participantes'] ?? [];
+      // Crear lista con nombre y cantidad de voluntarios
+      for (var doc in huertosSnapshot.docs) {
+        Map<String, dynamic> huertoData = doc.data() as Map<String, dynamic>;
+        String nombre = huertoData['nombre'] ?? 'Sin nombre';
+        List voluntarios = huertoData['voluntarios'] ?? [];
 
-        // Buscar si el usuario está en los participantes
-        var miParticipacion = participantes.firstWhere(
-          (p) => p['uid'] == uid,
-          orElse: () => null,
-        );
-
-        if (miParticipacion != null) {
-          String miEstado = miParticipacion['estado'] ?? 'pendiente';
-          
-          // SOLO sumar si está completada
-          if (miEstado == 'completada') {
-            double horas = (miParticipacion['horasComprometidas'] ?? 0).toDouble();
-            totalHoras += horas.toInt();
-          }
-        }
+        huertosList.add({
+          'nombre': nombre,
+          'voluntarios': voluntarios.length,
+          'id': doc.id,
+        });
       }
-    }
 
-    setState(() {
-      _totalHorasAcumuladas = totalHoras;
-    });
-  } catch (e) {
-    print('Error al cargar horas acumuladas: $e');
-    _totalHorasAcumuladas = 0;
-  }
-}
+      // Ordenar por cantidad de voluntarios (descendente)
+      huertosList.sort((a, b) => b['voluntarios'].compareTo(a['voluntarios']));
 
-Future<void> _cargarHuertosPopulares() async {
-  try {
-    List<Map<String, dynamic>> huertosList = [];
-    
-    // Obtener todos los huertos activos
-    QuerySnapshot huertosSnapshot = await _firestore
-        .collection('huertos')
-        .where('estado', isEqualTo: 'activo')
-        .get();
+      // Tomar solo los primeros 5
+      if (huertosList.length > 5) {
+        huertosList = huertosList.sublist(0, 5);
+      }
 
-    // Crear lista con nombre y cantidad de voluntarios
-    for (var doc in huertosSnapshot.docs) {
-      Map<String, dynamic> huertoData = doc.data() as Map<String, dynamic>;
-      String nombre = huertoData['nombre'] ?? 'Sin nombre';
-      List voluntarios = huertoData['voluntarios'] ?? [];
-      
-      huertosList.add({
-        'nombre': nombre,
-        'voluntarios': voluntarios.length,
-        'id': doc.id,
+      setState(() {
+        _huertosPopulares = huertosList;
       });
+    } catch (e) {
+      print('Error al cargar huertos populares: $e');
+      // Si hay error, mantener datos de ejemplo
+      _huertosPopulares = [
+        {'nombre': 'Huerto Ejemplo 1', 'voluntarios': 15},
+        {'nombre': 'Huerto Ejemplo 2', 'voluntarios': 12},
+        {'nombre': 'Huerto Ejemplo 3', 'voluntarios': 10},
+      ];
     }
-
-    // Ordenar por cantidad de voluntarios (descendente)
-    huertosList.sort((a, b) => b['voluntarios'].compareTo(a['voluntarios']));
-    
-    // Tomar solo los primeros 5
-    if (huertosList.length > 5) {
-      huertosList = huertosList.sublist(0, 5);
-    }
-
-    setState(() {
-      _huertosPopulares = huertosList;
-    });
-  } catch (e) {
-    print('Error al cargar huertos populares: $e');
-    // Si hay error, mantener datos de ejemplo
-    _huertosPopulares = [
-      {'nombre': 'Huerto Ejemplo 1', 'voluntarios': 15},
-      {'nombre': 'Huerto Ejemplo 2', 'voluntarios': 12},
-      {'nombre': 'Huerto Ejemplo 3', 'voluntarios': 10},
-    ];
   }
-}
 
   @override
   Widget build(BuildContext context) {
@@ -1419,10 +1515,7 @@ Future<void> _cargarHuertosPopulares() async {
           const SizedBox(height: 8),
           Text(
             'Próximamente: Gráfica interactiva',
-            style: TextStyle(
-              fontSize: 12,
-              color: Colors.grey.shade500,
-            ),
+            style: TextStyle(fontSize: 12, color: Colors.grey.shade500),
           ),
         ],
       ),
@@ -1442,9 +1535,11 @@ Future<void> _cargarHuertosPopulares() async {
     //Preparar datos para la gráfica
     List<String> huertos = _participacionPorHuerto.keys.toList();
     List<int> cantidades = _participacionPorHuerto.values.toList();
-    
+
     //Encontrar el valor máximo para escalar la gráfica
-    int maxVoluntarios = cantidades.isEmpty ? 10 : cantidades.reduce((a, b) => a > b ? a : b);
+    int maxVoluntarios = cantidades.isEmpty
+        ? 10
+        : cantidades.reduce((a, b) => a > b ? a : b);
     if (maxVoluntarios < 5) maxVoluntarios = 5; // Mínimo de escala
 
     return Container(
@@ -1473,7 +1568,11 @@ Future<void> _cargarHuertosPopulares() async {
                   color: Colors.blue.shade50,
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Icon(Icons.people, color: Colors.blue.shade700, size: 20),
+                child: Icon(
+                  Icons.people,
+                  color: Colors.blue.shade700,
+                  size: 20,
+                ),
               ),
               const SizedBox(width: 12),
               const Text(
@@ -1565,10 +1664,7 @@ Future<void> _cargarHuertosPopulares() async {
                   show: true,
                   drawVerticalLine: false,
                   getDrawingHorizontalLine: (value) {
-                    return FlLine(
-                      color: Colors.grey.shade300,
-                      strokeWidth: 1,
-                    );
+                    return FlLine(color: Colors.grey.shade300, strokeWidth: 1);
                   },
                 ),
                 borderData: FlBorderData(show: false),
@@ -1604,7 +1700,7 @@ Future<void> _cargarHuertosPopulares() async {
   // Widget para mostrar horas acumuladas con indicador circular
   Widget _buildGraficaHorasAcumuladas() {
     String tipoUsuario = widget.userData['tipoUsuario'] ?? 'Voluntario';
-    
+
     // Calcular porcentaje para el indicador circular (máximo 200 horas = 100%)
     double porcentaje = (_totalHorasAcumuladas / 200).clamp(0.0, 1.0);
 
@@ -1658,7 +1754,7 @@ Future<void> _cargarHuertosPopulares() async {
             ],
           ),
           const SizedBox(height: 30),
-          
+
           // Indicador circular con las horas
           Stack(
             alignment: Alignment.center,
@@ -1698,7 +1794,7 @@ Future<void> _cargarHuertosPopulares() async {
             ],
           ),
           const SizedBox(height: 20),
-          
+
           // Información adicional
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -1764,7 +1860,11 @@ Future<void> _cargarHuertosPopulares() async {
                   color: Colors.green.shade50,
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Icon(Icons.emoji_events, color: Colors.green.shade700, size: 20),
+                child: Icon(
+                  Icons.emoji_events,
+                  color: Colors.green.shade700,
+                  size: 20,
+                ),
               ),
               const SizedBox(width: 12),
               const Text(
@@ -1778,7 +1878,7 @@ Future<void> _cargarHuertosPopulares() async {
             ],
           ),
           const SizedBox(height: 20),
-          
+
           // Lista de huertos populares
           ListView.separated(
             shrinkWrap: true,
@@ -1789,11 +1889,11 @@ Future<void> _cargarHuertosPopulares() async {
               Map<String, dynamic> huerto = _huertosPopulares[index];
               String nombre = huerto['nombre'] ?? 'Sin nombre';
               int voluntarios = huerto['voluntarios'] ?? 0;
-              
+
               // Colores y medallas según posición
               Color colorPosicion;
               IconData iconoMedalla;
-              
+
               if (index == 0) {
                 colorPosicion = Colors.amber.shade600; // Oro
                 iconoMedalla = Icons.emoji_events;
@@ -1842,7 +1942,7 @@ Future<void> _cargarHuertosPopulares() async {
                       ),
                     ),
                     const SizedBox(width: 12),
-                    
+
                     // Nombre del huerto
                     Expanded(
                       child: Column(
@@ -1879,7 +1979,7 @@ Future<void> _cargarHuertosPopulares() async {
                         ],
                       ),
                     ),
-                    
+
                     // Barra de progreso visual
                     SizedBox(
                       width: 60,
@@ -1928,13 +2028,12 @@ Future<void> _cargarHuertosPopulares() async {
   // Helper para calcular porcentaje de la barra visual
   double _calcularPorcentaje(int voluntarios) {
     if (_huertosPopulares.isEmpty) return 0.0;
-    
+
     int maxVoluntarios = _huertosPopulares[0]['voluntarios'] ?? 1;
     if (maxVoluntarios == 0) return 0.0;
-    
+
     return (voluntarios / maxVoluntarios).clamp(0.0, 1.0);
   }
-
 }
 
 //Pantalla educación
@@ -2003,10 +2102,7 @@ class EducacionScreen extends StatelessWidget {
               const SizedBox(height: 8),
               Text(
                 'Aprende y mejora tus habilidades de jardinería',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey.shade600,
-                ),
+                style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
               ),
               const SizedBox(height: 30),
 
@@ -2084,7 +2180,8 @@ class EducacionScreen extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => CapacitacionesScreen(userData: userData),
+                      builder: (context) =>
+                          CapacitacionesScreen(userData: userData),
                     ),
                   );
                 },
@@ -2101,7 +2198,8 @@ class EducacionScreen extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => CalendarioEventosScreen(userData: userData),
+                      builder: (context) =>
+                          CalendarioEventosScreen(userData: userData),
                     ),
                   );
                 },
@@ -2165,10 +2263,7 @@ class EducacionScreen extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     subtitulo,
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: Colors.grey.shade600,
-                    ),
+                    style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
                   ),
                 ],
               ),
@@ -2235,11 +2330,7 @@ class ContenidoEducativoScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Icon(
-                    Icons.menu_book,
-                    color: Colors.white,
-                    size: 40,
-                  ),
+                  const Icon(Icons.menu_book, color: Colors.white, size: 40),
                   const SizedBox(height: 12),
                   Text(
                     descripcion,
@@ -2324,7 +2415,7 @@ class CapacitacionesScreen extends StatefulWidget {
   final Map<String, dynamic> userData;
 
   const CapacitacionesScreen({Key? key, required this.userData})
-      : super(key: key);
+    : super(key: key);
 
   @override
   State<CapacitacionesScreen> createState() => _CapacitacionesScreenState();
@@ -2367,7 +2458,8 @@ class _CapacitacionesScreenState extends State<CapacitacionesScreen> {
   }
 
   Future<void> _registrarseEnCapacitacion(
-      Map<String, dynamic> capacitacion) async {
+    Map<String, dynamic> capacitacion,
+  ) async {
     String uid = widget.userData['uid'];
     String capacitacionId = capacitacion['id'];
 
@@ -2390,9 +2482,7 @@ class _CapacitacionesScreenState extends State<CapacitacionesScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Confirmar registro'),
-        content: Text(
-          '¿Deseas registrarte en "${capacitacion['titulo']}"?',
-        ),
+        content: Text('¿Deseas registrarte en "${capacitacion['titulo']}"?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
@@ -2598,7 +2688,11 @@ class _CapacitacionesScreenState extends State<CapacitacionesScreen> {
                     color: Colors.orange.shade100,
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: Icon(Icons.school, color: Colors.orange.shade700, size: 24),
+                  child: Icon(
+                    Icons.school,
+                    color: Colors.orange.shade700,
+                    size: 24,
+                  ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -2678,22 +2772,36 @@ class _CapacitacionesScreenState extends State<CapacitacionesScreen> {
                 ],
                 Row(
                   children: [
-                    Icon(Icons.calendar_today, size: 16, color: Colors.grey.shade600),
+                    Icon(
+                      Icons.calendar_today,
+                      size: 16,
+                      color: Colors.grey.shade600,
+                    ),
                     const SizedBox(width: 6),
                     Text(
                       fechaFormateada,
-                      style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: Colors.grey.shade600,
+                      ),
                     ),
                   ],
                 ),
                 const SizedBox(height: 8),
                 Row(
                   children: [
-                    Icon(Icons.access_time, size: 16, color: Colors.grey.shade600),
+                    Icon(
+                      Icons.access_time,
+                      size: 16,
+                      color: Colors.grey.shade600,
+                    ),
                     const SizedBox(width: 6),
                     Text(
                       'Duración: $duracion',
-                      style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: Colors.grey.shade600,
+                      ),
                     ),
                   ],
                 ),
@@ -2704,7 +2812,10 @@ class _CapacitacionesScreenState extends State<CapacitacionesScreen> {
                     const SizedBox(width: 6),
                     Text(
                       'Cupos: ${participantes.length}/$cupoMaximo',
-                      style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: Colors.grey.shade600,
+                      ),
                     ),
                     const SizedBox(width: 8),
                     if (!aceptaRegistros)
@@ -2787,7 +2898,7 @@ class CrearCapacitacionScreen extends StatefulWidget {
   final Map<String, dynamic> userData;
 
   const CrearCapacitacionScreen({Key? key, required this.userData})
-      : super(key: key);
+    : super(key: key);
 
   @override
   State<CrearCapacitacionScreen> createState() =>
@@ -3268,7 +3379,7 @@ class CalendarioEventosScreen extends StatefulWidget {
   final Map<String, dynamic> userData;
 
   const CalendarioEventosScreen({Key? key, required this.userData})
-      : super(key: key);
+    : super(key: key);
 
   @override
   State<CalendarioEventosScreen> createState() =>
@@ -3649,14 +3760,19 @@ class _CalendarioEventosScreenState extends State<CalendarioEventosScreen> {
                 ],
                 Row(
                   children: [
-                    Icon(Icons.calendar_today,
-                        size: 16, color: Colors.grey.shade600),
+                    Icon(
+                      Icons.calendar_today,
+                      size: 16,
+                      color: Colors.grey.shade600,
+                    ),
                     const SizedBox(width: 6),
                     Expanded(
                       child: Text(
                         fechaFormateada,
                         style: TextStyle(
-                            fontSize: 13, color: Colors.grey.shade600),
+                          fontSize: 13,
+                          color: Colors.grey.shade600,
+                        ),
                       ),
                     ),
                   ],
@@ -3664,14 +3780,19 @@ class _CalendarioEventosScreenState extends State<CalendarioEventosScreen> {
                 const SizedBox(height: 8),
                 Row(
                   children: [
-                    Icon(Icons.location_on,
-                        size: 16, color: Colors.grey.shade600),
+                    Icon(
+                      Icons.location_on,
+                      size: 16,
+                      color: Colors.grey.shade600,
+                    ),
                     const SizedBox(width: 6),
                     Expanded(
                       child: Text(
                         lugar,
                         style: TextStyle(
-                            fontSize: 13, color: Colors.grey.shade600),
+                          fontSize: 13,
+                          color: Colors.grey.shade600,
+                        ),
                       ),
                     ),
                   ],
@@ -3683,8 +3804,10 @@ class _CalendarioEventosScreenState extends State<CalendarioEventosScreen> {
                     const SizedBox(width: 6),
                     Text(
                       '${participantes.length} ${participantes.length == 1 ? 'confirmado' : 'confirmados'}',
-                      style:
-                          TextStyle(fontSize: 13, color: Colors.grey.shade600),
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: Colors.grey.shade600,
+                      ),
                     ),
                   ],
                 ),
@@ -8347,7 +8470,7 @@ class _GestionarActividadesScreenState
     );
   }
 
-//Widget para estado vacío
+  //Widget para estado vacío
   Widget _buildEmptyState() {
     return Center(
       child: SingleChildScrollView(
@@ -8420,7 +8543,7 @@ class _GestionarActividadesScreenState
     );
   }
 
-//Widget para card de actividad
+  //Widget para card de actividad
   Widget _buildActividadCard(Map<String, dynamic> actividad) {
     String titulo = actividad['titulo'] ?? 'Sin título';
     String tipo = actividad['tipo'] ?? 'general';
@@ -8609,7 +8732,7 @@ class _GestionarActividadesScreenState
     );
   }
 
-//Mostrar detalle de actividad
+  //Mostrar detalle de actividad
   void _mostrarDetalleActividad(Map<String, dynamic> actividad) {
     showDialog(
       context: context,
@@ -8656,7 +8779,7 @@ class _GestionarActividadesScreenState
     );
   }
 
-//Widget para fila de detalle
+  //Widget para fila de detalle
   Widget _buildDetailRow(String label, String value) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
@@ -8676,7 +8799,7 @@ class _GestionarActividadesScreenState
     );
   }
 
-//Cambiar estado de actividad
+  //Cambiar estado de actividad
   void _cambiarEstadoActividad(Map<String, dynamic> actividad) {
     String estadoActual = actividad['estado'] ?? 'pendiente';
     String? nuevoEstado;
@@ -8769,7 +8892,7 @@ class _GestionarActividadesScreenState
     });
   }
 
-//Color según estado
+  //Color según estado
   Color _getEstadoColor(String estado) {
     switch (estado) {
       case 'pendiente':
@@ -8785,7 +8908,7 @@ class _GestionarActividadesScreenState
     }
   }
 
-//Texto según estado
+  //Texto según estado
   String _getEstadoTexto(String estado) {
     switch (estado) {
       case 'pendiente':
@@ -8801,7 +8924,7 @@ class _GestionarActividadesScreenState
     }
   }
 
-//Icono según tipo
+  //Icono según tipo
   IconData _getTipoIcon(String tipo) {
     switch (tipo.toLowerCase()) {
       case 'riego':
@@ -8819,7 +8942,7 @@ class _GestionarActividadesScreenState
     }
   }
 
-//Color según tipo
+  //Color según tipo
   Color _getTipoColor(String tipo) {
     switch (tipo.toLowerCase()) {
       case 'riego':
@@ -10781,7 +10904,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => EstadisticasScreen(userData: widget.userData),
+                    builder: (context) =>
+                        EstadisticasScreen(userData: widget.userData),
                   ),
                 );
               },
@@ -10794,7 +10918,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => EducacionScreen(userData: widget.userData),
+                    builder: (context) =>
+                        EducacionScreen(userData: widget.userData),
                   ),
                 );
               },
@@ -11213,7 +11338,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
             ],
           ),
-          
+
           // Botones de acción solo para voluntarios con actividades pendientes
           if (tipoUsuario == 'Voluntario' && miEstado == 'pendiente') ...[
             const SizedBox(height: 12),
@@ -11223,7 +11348,8 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 Expanded(
                   child: OutlinedButton.icon(
-                    onPressed: () => _cambiarEstadoActividad(actividad, 'fallida'),
+                    onPressed: () =>
+                        _cambiarEstadoActividad(actividad, 'fallida'),
                     icon: const Icon(Icons.cancel, size: 16, color: Colors.red),
                     label: const Text(
                       'Fallida',
@@ -11241,7 +11367,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 const SizedBox(width: 8),
                 Expanded(
                   child: ElevatedButton.icon(
-                    onPressed: () => _cambiarEstadoActividad(actividad, 'completada'),
+                    onPressed: () =>
+                        _cambiarEstadoActividad(actividad, 'completada'),
                     icon: const Icon(
                       Icons.check_circle,
                       size: 16,
@@ -11340,8 +11467,8 @@ class _HomeScreenState extends State<HomeScreen> {
       for (int i = 0; i < participantes.length; i++) {
         if (participantes[i]['uid'] == uid) {
           participantes[i]['estado'] = nuevoEstado;
-          participantes[i]['fechaActualizacion'] =
-              DateTime.now().toIso8601String();
+          participantes[i]['fechaActualizacion'] = DateTime.now()
+              .toIso8601String();
           break;
         }
       }
@@ -11362,7 +11489,7 @@ class _HomeScreenState extends State<HomeScreen> {
               'fecha': DateTime.now().toIso8601String(),
               'huerto': actividad['huertoNombre'] ?? 'Sin huerto',
               'horas': actividad['misHoras'] ?? 0,
-            }
+            },
           ]),
         });
       }
@@ -11377,8 +11504,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 ? '¡Actividad completada! Se agregó a tu historial'
                 : 'Actividad marcada como fallida',
           ),
-          backgroundColor:
-              nuevoEstado == 'completada' ? Colors.green : Colors.orange,
+          backgroundColor: nuevoEstado == 'completada'
+              ? Colors.green
+              : Colors.orange,
         ),
       );
 
@@ -11397,5 +11525,4 @@ class _HomeScreenState extends State<HomeScreen> {
       );
     }
   }
-
 }
