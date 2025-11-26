@@ -1084,7 +1084,6 @@ class _EstadisticasScreenState extends State<EstadisticasScreen> {
     });
 
     try {
-      // TODO: Implementar carga de datos reales en los siguientes pasos
       await _cargarParticipacionPorHuerto();
       await _cargarHorasAcumuladas();
       await _cargarHuertosPopulares();
@@ -1130,6 +1129,7 @@ Future<void> _cargarParticipacionPorHuerto() async {
   }
 }
 
+// Cargar horas acumuladas según tipo de usuario
 Future<void> _cargarHorasAcumuladas() async {
   try {
     int totalHoras = 0;
@@ -1137,7 +1137,7 @@ Future<void> _cargarHorasAcumuladas() async {
     String uid = widget.userData['uid'];
 
     if (tipoUsuario == 'Administrador') {
-      // Para admin: contar horas de todos los voluntarios en sus huertos
+      // Contar horas solo de actividades completadas en sus huertos (admin)
       QuerySnapshot huertosSnapshot = await _firestore
           .collection('huertos')
           .where('creadorId', isEqualTo: uid)
@@ -1152,19 +1152,24 @@ Future<void> _cargarHorasAcumuladas() async {
             .where('huertoId', whereIn: huertosIds)
             .get();
 
-        // Sumar las horas comprometidas de todos los participantes
+        // Sumar las horas solo de voluntarios que se hayan completado
         for (var doc in actividadesSnapshot.docs) {
           Map<String, dynamic> actividad = doc.data() as Map<String, dynamic>;
           List<dynamic> participantes = actividad['participantes'] ?? [];
 
           for (var participante in participantes) {
-            double horas = (participante['horasComprometidas'] ?? 0).toDouble();
-            totalHoras += horas.toInt();
+            String estadoParticipante = participante['estado'] ?? 'pendiente';
+            
+            // solo sumar si está completada
+            if (estadoParticipante == 'completada') {
+              double horas = (participante['horasComprometidas'] ?? 0).toDouble();
+              totalHoras += horas.toInt();
+            }
           }
         }
       }
     } else {
-      // Para voluntario: contar solo sus horas
+      // Para voluntario: contar SOLO sus horas de actividades completadas
       QuerySnapshot actividadesSnapshot = await _firestore
           .collection('actividades')
           .get();
@@ -1180,8 +1185,13 @@ Future<void> _cargarHorasAcumuladas() async {
         );
 
         if (miParticipacion != null) {
-          double horas = (miParticipacion['horasComprometidas'] ?? 0).toDouble();
-          totalHoras += horas.toInt();
+          String miEstado = miParticipacion['estado'] ?? 'pendiente';
+          
+          // SOLO sumar si está completada
+          if (miEstado == 'completada') {
+            double horas = (miParticipacion['horasComprometidas'] ?? 0).toDouble();
+            totalHoras += horas.toInt();
+          }
         }
       }
     }
@@ -1191,7 +1201,6 @@ Future<void> _cargarHorasAcumuladas() async {
     });
   } catch (e) {
     print('Error al cargar horas acumuladas: $e');
-    // Si hay error, mantener valor por defecto
     _totalHorasAcumuladas = 0;
   }
 }
@@ -11019,7 +11028,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  //Widget para card de actividad
+  // Widget para card de actividad
   Widget _buildActividadCard(
     Map<String, dynamic> actividad,
     String tipoUsuario,
@@ -11027,8 +11036,10 @@ class _HomeScreenState extends State<HomeScreen> {
     String tipo = actividad['tipo'] ?? 'Sin tipo';
     String huertoNombre = actividad['huertoNombre'] ?? 'Sin huerto';
     String descripcion = actividad['descripcion'] ?? '';
+    String miEstado = actividad['miEstado'] ?? 'pendiente';
+    double misHoras = (actividad['misHoras'] ?? 0).toDouble();
 
-    // Mapeo de iconos según tipo de actividad
+    // Mapeo de iconos segÃºn tipo de actividad
     IconData icono;
     Color color;
 
@@ -11058,11 +11069,42 @@ class _HomeScreenState extends State<HomeScreen> {
         color = Colors.grey;
     }
 
+    // Color del estado para voluntarios
+    Color estadoColor;
+    IconData estadoIcono;
+    String estadoTexto;
+
+    if (tipoUsuario == 'Voluntario') {
+      switch (miEstado) {
+        case 'completada':
+          estadoColor = Colors.green;
+          estadoIcono = Icons.check_circle;
+          estadoTexto = 'COMPLETADA';
+          break;
+        case 'fallida':
+          estadoColor = Colors.red;
+          estadoIcono = Icons.cancel;
+          estadoTexto = 'FALLIDA';
+          break;
+        default: // pendiente o en_proceso
+          estadoColor = Colors.orange;
+          estadoIcono = Icons.pending;
+          estadoTexto = 'PENDIENTE';
+      }
+    } else {
+      estadoColor = Colors.blue;
+      estadoIcono = Icons.info;
+      estadoTexto = 'ADMIN';
+    }
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
+        border: tipoUsuario == 'Voluntario' && miEstado == 'pendiente'
+            ? Border.all(color: Colors.orange.shade300, width: 2)
+            : null,
         boxShadow: [
           BoxShadow(
             color: Colors.grey.withOpacity(0.1),
@@ -11071,151 +11113,289 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      child: InkWell(
-        onTap: () async {
-          //Navegar a detalle de actividad
-          String huertoId = actividad['huertoId'] ?? '';
-
-          if (huertoId.isEmpty) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('No se puede acceder a esta actividad'),
-                backgroundColor: Colors.red,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: color.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(icono, color: color, size: 28),
               ),
-            );
-            return;
-          }
-
-          //Obtener datos completos del huerto
-          try {
-            DocumentSnapshot huertoDoc = await _firestore
-                .collection('huertos')
-                .doc(huertoId)
-                .get();
-
-            if (!huertoDoc.exists) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Huerto no encontrado'),
-                  backgroundColor: Colors.red,
-                ),
-              );
-              return;
-            }
-
-            Map<String, dynamic> huertoData =
-                huertoDoc.data() as Map<String, dynamic>;
-            huertoData['id'] = huertoDoc.id;
-
-            //Navegar según tipo de usuario
-            if (tipoUsuario == 'Voluntario') {
-              final resultado = await Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => DetalleActividadScreen(
-                    actividadData: actividad,
-                    userData: widget.userData,
-                    huertoData: huertoData,
-                  ),
-                ),
-              );
-
-              // Si hubo cambios, recargar
-              if (resultado == true) {
-                _cargarActividadesPendientes();
-              }
-            } else {
-              //Para administrador, ir a detalle del huerto
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => DetalleHuertoScreen(
-                    huertoData: huertoData,
-                    userData: widget.userData,
-                  ),
-                ),
-              );
-            }
-          } catch (e) {
-            print('Error al cargar huerto: $e');
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
-            );
-          }
-        },
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: color.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Icon(icono, color: color, size: 28),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    tipo,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black87,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Row(
-                    children: [
-                      Icon(Icons.eco, size: 14, color: Colors.grey.shade600),
-                      const SizedBox(width: 4),
-                      Expanded(
-                        child: Text(
-                          huertoNombre,
-                          style: TextStyle(
-                            fontSize: 13,
-                            color: Colors.grey.shade600,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      tipo,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
                       ),
-                    ],
-                  ),
-                  if (tipoUsuario == 'Voluntario' &&
-                      actividad['misHoras'] != null) ...[
+                    ),
                     const SizedBox(height: 4),
                     Row(
                       children: [
-                        Icon(
-                          Icons.access_time,
-                          size: 14,
-                          color: Colors.grey.shade600,
-                        ),
+                        Icon(Icons.eco, size: 14, color: Colors.grey.shade600),
                         const SizedBox(width: 4),
-                        Text(
-                          '${actividad['misHoras']} horas',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey.shade600,
+                        Expanded(
+                          child: Text(
+                            huertoNombre,
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: Colors.grey.shade600,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                       ],
                     ),
+                    if (tipoUsuario == 'Voluntario' && misHoras > 0) ...[
+                      const SizedBox(height: 4),
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.access_time,
+                            size: 14,
+                            color: Colors.grey.shade600,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            '$misHoras horas',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey.shade600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ],
-                ],
+                ),
               ),
-            ),
-            Icon(
-              Icons.arrow_forward_ios,
-              size: 16,
-              color: Colors.grey.shade400,
+              if (tipoUsuario == 'Voluntario')
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: estadoColor.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(estadoIcono, size: 12, color: estadoColor),
+                      const SizedBox(width: 4),
+                      Text(
+                        estadoTexto,
+                        style: TextStyle(
+                          fontSize: 9,
+                          fontWeight: FontWeight.bold,
+                          color: estadoColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              else
+                Icon(
+                  Icons.arrow_forward_ios,
+                  size: 16,
+                  color: Colors.grey.shade400,
+                ),
+            ],
+          ),
+          
+          // Botones de acción solo para voluntarios con actividades pendientes
+          if (tipoUsuario == 'Voluntario' && miEstado == 'pendiente') ...[
+            const SizedBox(height: 12),
+            const Divider(),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: () => _cambiarEstadoActividad(actividad, 'fallida'),
+                    icon: const Icon(Icons.cancel, size: 16, color: Colors.red),
+                    label: const Text(
+                      'Fallida',
+                      style: TextStyle(color: Colors.red, fontSize: 13),
+                    ),
+                    style: OutlinedButton.styleFrom(
+                      side: const BorderSide(color: Colors.red),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () => _cambiarEstadoActividad(actividad, 'completada'),
+                    icon: const Icon(
+                      Icons.check_circle,
+                      size: 16,
+                      color: Colors.white,
+                    ),
+                    label: const Text(
+                      'Completada',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 13,
+                      ),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green.shade700,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      elevation: 0,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ],
-        ),
+        ],
       ),
     );
   }
+
+  //Método para cambiar el estado de una actividad (Voluntario)
+  Future<void> _cambiarEstadoActividad(
+    Map<String, dynamic> actividad,
+    String nuevoEstado,
+  ) async {
+    String uid = widget.userData['uid'];
+    String actividadId = actividad['id'];
+
+    // Confirmar acción
+    bool? confirmar = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(
+          nuevoEstado == 'completada'
+              ? 'Marcar como Completada'
+              : 'Marcar como Fallida',
+        ),
+        content: Text(
+          nuevoEstado == 'completada'
+              ? '¿Confirmas que completaste esta actividad? Se agregará a tu historial.'
+              : '¿Marcar esta actividad como fallida? No se agregará a tu historial.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancelar'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: nuevoEstado == 'completada'
+                  ? Colors.green.shade700
+                  : Colors.red.shade700,
+            ),
+            child: const Text(
+              'Confirmar',
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmar != true) return;
+
+    // Mostrar loading
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const Center(child: CircularProgressIndicator()),
+    );
+
+    try {
+      // Obtener la actividad actualizada
+      DocumentSnapshot actividadDoc = await _firestore
+          .collection('actividades')
+          .doc(actividadId)
+          .get();
+
+      Map<String, dynamic> actividadData =
+          actividadDoc.data() as Map<String, dynamic>;
+      List<dynamic> participantes = actividadData['participantes'] ?? [];
+
+      // Encontrar y actualizar el participante
+      for (int i = 0; i < participantes.length; i++) {
+        if (participantes[i]['uid'] == uid) {
+          participantes[i]['estado'] = nuevoEstado;
+          participantes[i]['fechaActualizacion'] =
+              DateTime.now().toIso8601String();
+          break;
+        }
+      }
+
+      // Actualizar en Firebase
+      await _firestore.collection('actividades').doc(actividadId).update({
+        'participantes': participantes,
+      });
+
+      // Si se marca como completada, agregar al historial del usuario
+      if (nuevoEstado == 'completada') {
+        await _firestore.collection('usuarios').doc(uid).update({
+          'actividadesCompletadas': FieldValue.arrayUnion([
+            {
+              'actividadId': actividadId,
+              'titulo': actividad['tipo'] ?? 'Actividad',
+              'tipo': actividad['tipo'] ?? 'general',
+              'fecha': DateTime.now().toIso8601String(),
+              'huerto': actividad['huertoNombre'] ?? 'Sin huerto',
+              'horas': actividad['misHoras'] ?? 0,
+            }
+          ]),
+        });
+      }
+
+      // Cerrar loading
+      Navigator.pop(context);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            nuevoEstado == 'completada'
+                ? '¡Actividad completada! Se agregó a tu historial'
+                : 'Actividad marcada como fallida',
+          ),
+          backgroundColor:
+              nuevoEstado == 'completada' ? Colors.green : Colors.orange,
+        ),
+      );
+
+      // Recargar actividades
+      _cargarActividadesPendientes();
+    } catch (e) {
+      // Cerrar loading
+      Navigator.pop(context);
+
+      print('Error al actualizar estado: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error al actualizar: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
 }
