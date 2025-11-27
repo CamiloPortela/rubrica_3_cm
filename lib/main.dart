@@ -5483,6 +5483,7 @@ class _HuertosScreenState extends State<HuertosScreen> {
     String tamano = huerto['tamaño'] ?? 'No especificado';
     String tipoCultivo = huerto['tipoCultivo'] ?? 'No especificado';
     String estado = huerto['estado'] ?? 'activo';
+    int maxVoluntarios = huerto['maxVoluntarios'] ?? 50;
     int numVoluntarios = (huerto['voluntarios'] ?? []).length;
 
     return Container(
@@ -6072,7 +6073,7 @@ class _BuscarHuertosScreenState extends State<BuscarHuertosScreen> {
                 const SizedBox(height: 8),
                 _buildInfoRow(
                   Icons.people,
-                  'Voluntarios: $numVoluntarios${maxVoluntarios < 999 ? '/$maxVoluntarios' : ''}',
+                  'Voluntarios: $numVoluntarios/$maxVoluntarios',
                 ),
                 const SizedBox(height: 16),
 
@@ -7436,7 +7437,7 @@ Future<void> _crearHuerto() async {
     return;
   }
 
-  // Validación de tamaño (no vacío y formato válido)
+  // Validación de tamaño (solo números, con o sin unidad de medida)
   String tamano = tamanoController.text.trim();
   if (tamano.isEmpty) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -7449,15 +7450,32 @@ Future<void> _crearHuerto() async {
     return;
   }
 
-  if (tamano.length < 2) {
+  // Validar que contenga al menos un número
+  if (!RegExp(r'\d').hasMatch(tamano)) {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text('El tamaño debe tener al menos 2 caracteres (ej: 50m²)'),
+        content: Text('El tamaño debe contener números (ej: 50, 100m², 2 hectáreas)'),
         backgroundColor: Colors.orange,
         duration: Duration(seconds: 3),
       ),
     );
     return;
+  }
+
+  // Validar que el número esté en un rango válido (1-99999)
+  String numeroStr = tamano.replaceAll(RegExp(r'[^0-9]'), '');
+  if (numeroStr.isNotEmpty) {
+    int? numero = int.tryParse(numeroStr);
+    if (numero == null || numero < 1 || numero > 99999) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('El tamaño debe estar entre 1 y 99999'),
+          backgroundColor: Colors.orange,
+          duration: Duration(seconds: 3),
+        ),
+      );
+      return;
+    }
   }
 
   // Validación de dirección (mínimo 5 caracteres)
@@ -7517,7 +7535,7 @@ Future<void> _crearHuerto() async {
       'fechaCreacion': FieldValue.serverTimestamp(),
       'voluntarios': [],
       'actividades': [],
-      'maxVoluntarios': 999, // Límite de voluntarios por defecto
+      'maxVoluntarios': 50, // Límite de voluntarios por defecto
     });
 
     // Actualizar lista de huertos del administrador
@@ -7640,23 +7658,34 @@ Future<void> _crearHuerto() async {
                 ),
                 const SizedBox(height: 16),
 
-                //Campo tamaño
+                // Campo Tamaño
                 TextFormField(
                   controller: tamanoController,
                   enabled: !_isLoading,
+                  keyboardType: TextInputType.text, // Permite números y texto
                   decoration: InputDecoration(
                     labelText: 'Tamaño *',
-                    hintText: 'Ej: 50m², 100m², 1 hectárea',
+                    hintText: 'Ej: 50m², 100, 2 hectáreas',
                     prefixIcon: const Icon(Icons.straighten),
+                    helperText: 'Ingresa el tamaño con su unidad',
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    filled: true,
-                    fillColor: Colors.white,
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(
+                        color: Colors.green.shade700,
+                        width: 2,
+                      ),
+                    ),
                   ),
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
-                      return 'Por favor ingresa el tamaño';
+                      return 'El tamaño es obligatorio';
+                    }
+                    // Validar que contenga al menos un número
+                    if (!RegExp(r'\d').hasMatch(value)) {
+                      return 'Debe contener números';
                     }
                     return null;
                   },
