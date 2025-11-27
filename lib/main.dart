@@ -202,7 +202,6 @@ class WelcomeScreen extends StatelessWidget {
             children: [
               const Spacer(flex: 2),
 
-              //Logo principal
               // Logo principal
               Container(
                 width: 200,
@@ -1387,28 +1386,30 @@ class _EstadisticasScreenState extends State<EstadisticasScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Imagen de bienvenida
-                      Container(
-                        width: 120,
-                        height: 120,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(16),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.2),
-                              blurRadius: 10,
-                              offset: const Offset(0, 5),
+                      // Imagen de personaje
+                      Center(
+                        child: Container(
+                          width: 150,
+                          height: 150,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(16),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.2),
+                                blurRadius: 10,
+                                offset: const Offset(0, 5),
+                              ),
+                            ],
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(16),
+                            child: Image.asset(
+                              'assets/images/leaf_png.png',
+                              fit: BoxFit.cover,
+                              width: double.infinity,
+                              height: double.infinity,
                             ),
-                          ],
-                        ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(16),
-                          child: Image.asset(
-                            'assets/images/hand_png.png',
-                            fit: BoxFit.cover,
-                            width: double.infinity,
-                            height: double.infinity,
                           ),
                         ),
                       ),
@@ -2080,23 +2081,26 @@ class EducacionScreen extends StatelessWidget {
               // Imagen de personaje
               Center(
                 child: Container(
-                  width: 120,
-                  height: 120,
+                  width: 150,
+                  height: 150,
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    shape: BoxShape.circle,
+                    borderRadius: BorderRadius.circular(16),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.grey.withValues(alpha:0.2),
+                        color: Colors.grey.withOpacity(0.2),
                         blurRadius: 10,
                         offset: const Offset(0, 5),
                       ),
                     ],
                   ),
-                  child: ClipOval(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(16),
                     child: Image.asset(
                       'assets/images/tree_png.png',
                       fit: BoxFit.cover,
+                      width: double.infinity,
+                      height: double.infinity,
                     ),
                   ),
                 ),
