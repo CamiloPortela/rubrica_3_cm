@@ -7445,70 +7445,158 @@ class _CrearHuertoScreenState extends State<CrearHuertoScreen> {
     'Inactivo',
   ];
 
-  Future<void> _crearHuerto() async {
-    if (!_formKey.currentState!.validate()) {
-      return;
-    }
+Future<void> _crearHuerto() async {
+  // Validar campos del formulario
+  if (!_formKey.currentState!.validate()) {
+    return;
+  }
 
-    setState(() {
-      _isLoading = true;
+  // Validación adicional de nombre (mínimo 3 caracteres)
+  String nombre = nombreController.text.trim();
+  if (nombre.length < 3) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('El nombre del huerto debe tener al menos 3 caracteres'),
+        backgroundColor: Colors.orange,
+        duration: Duration(seconds: 3),
+      ),
+    );
+    return;
+  }
+
+  // Validación de nombre (solo letras, números y espacios)
+  if (!RegExp(r'^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s]+$').hasMatch(nombre)) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('El nombre solo puede contener letras, números y espacios'),
+        backgroundColor: Colors.orange,
+        duration: Duration(seconds: 3),
+      ),
+    );
+    return;
+  }
+
+  // Validación de tamaño (no vacío y formato válido)
+  String tamano = tamanoController.text.trim();
+  if (tamano.isEmpty) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Por favor ingresa el tamaño del huerto'),
+        backgroundColor: Colors.orange,
+        duration: Duration(seconds: 3),
+      ),
+    );
+    return;
+  }
+
+  if (tamano.length < 2) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('El tamaño debe tener al menos 2 caracteres (ej: 50m²)'),
+        backgroundColor: Colors.orange,
+        duration: Duration(seconds: 3),
+      ),
+    );
+    return;
+  }
+
+  // Validación de dirección (mínimo 5 caracteres)
+  String direccion = direccionController.text.trim();
+  if (direccion.length < 5) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('La dirección debe tener al menos 5 caracteres'),
+        backgroundColor: Colors.orange,
+        duration: Duration(seconds: 3),
+      ),
+    );
+    return;
+  }
+
+  // Validación de tipo de cultivo
+  if (tipoCultivoSeleccionado.isEmpty || tipoCultivoSeleccionado == 'Selecciona') {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Por favor selecciona un tipo de cultivo'),
+        backgroundColor: Colors.orange,
+        duration: Duration(seconds: 3),
+      ),
+    );
+    return;
+  }
+
+  // Validación de estado
+  if (estadoSeleccionado.isEmpty || estadoSeleccionado == 'Selecciona') {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Por favor selecciona el estado del huerto'),
+        backgroundColor: Colors.orange,
+        duration: Duration(seconds: 3),
+      ),
+    );
+    return;
+  }
+
+  setState(() {
+    _isLoading = true;
+  });
+
+  try {
+    String uid = widget.userData['uid'];
+
+    // Crear documento del huerto en Firestore
+    DocumentReference huertoRef = await _firestore.collection('huertos').add({
+      'nombre': nombre,
+      'tamaño': tamano,
+      'direccion': direccion,
+      'tipoCultivo': tipoCultivoSeleccionado,
+      'estado': estadoSeleccionado.toLowerCase(),
+      'descripcion': descripcionController.text.trim(),
+      'creadorId': uid,
+      'creadorNombre': widget.userData['nombre'] ?? 'Administrador',
+      'fechaCreacion': FieldValue.serverTimestamp(),
+      'voluntarios': [],
+      'actividades': [],
+      'maxVoluntarios': 999, // Límite de voluntarios por defecto
     });
 
-    try {
-      String uid = widget.userData['uid'];
+    // Actualizar lista de huertos del administrador
+    await _firestore.collection('usuarios').doc(uid).update({
+      'huertosCreados': FieldValue.arrayUnion([huertoRef.id]),
+    });
 
-      //Crear documento del huerto en Firestore
-      DocumentReference huertoRef = await _firestore.collection('huertos').add({
-        'nombre': nombreController.text.trim(),
-        'tamaño': tamanoController.text.trim(),
-        'direccion': direccionController.text.trim(),
-        'tipoCultivo': tipoCultivoSeleccionado,
-        'estado': estadoSeleccionado.toLowerCase(),
-        'descripcion': descripcionController.text.trim(),
-        'creadorId': uid,
-        'creadorNombre': widget.userData['nombre'] ?? 'Administrador',
-        'fechaCreacion': FieldValue.serverTimestamp(),
-        'voluntarios': [],
-        'actividades': [],
-      });
+    setState(() {
+      _isLoading = false;
+    });
 
-      //Actualizar lista de huertos del administrador
-      await _firestore.collection('usuarios').doc(uid).update({
-        'huertosCreados': FieldValue.arrayUnion([huertoRef.id]),
-      });
-
-      setState(() {
-        _isLoading = false;
-      });
-
-      //Mostrar mensaje de éxito
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            '¡Huerto "${nombreController.text}" creado exitosamente!',
-          ),
-          backgroundColor: Colors.green,
-          duration: const Duration(seconds: 3),
+    // Mostrar mensaje de éxito
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          '¡Huerto "$nombre" creado exitosamente!',
         ),
-      );
+        backgroundColor: Colors.green,
+        duration: const Duration(seconds: 3),
+      ),
+    );
 
-      //Regresar a la pantalla anterior
-      Navigator.pop(context, true); //true indica que se creó un huerto
-    } catch (e) {
-      setState(() {
-        _isLoading = false;
-      });
+    // Regresar a la pantalla anterior
+    Navigator.pop(context, true); // true indica que se creó un huerto
+  } catch (e) {
+    setState(() {
+      _isLoading = false;
+    });
 
-      print('Error al crear huerto: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Error al crear huerto: $e'),
-          backgroundColor: Colors.red,
-          duration: const Duration(seconds: 3),
-        ),
-      );
-    }
+    print('Error al crear huerto: $e');
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Error al crear huerto: $e'),
+        backgroundColor: Colors.red,
+        duration: const Duration(seconds: 3),
+      ),
+    );
   }
+}
 
   @override
   Widget build(BuildContext context) {
