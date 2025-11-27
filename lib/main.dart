@@ -4537,9 +4537,13 @@ class PerfilScreen extends StatelessWidget {
                     children: [
                       Expanded(
                         child: _buildStatCard(
-                          Icons.task_alt,
-                          '${actividadesCompletadas.length}',
-                          'Actividades\nCompletadas',
+                          tipoUsuario == 'Administrador' ? Icons.post_add : Icons.task_alt,
+                          tipoUsuario == 'Administrador'
+                              ? '${(userData['actividadesPublicadas'] ?? []).length}'
+                              : '${actividadesCompletadas.length}',
+                          tipoUsuario == 'Administrador'
+                              ? 'Actividades\nPublicadas'
+                              : 'Actividades\nCompletadas',
                           Colors.green,
                         ),
                       ),
@@ -4547,7 +4551,9 @@ class PerfilScreen extends StatelessWidget {
                       Expanded(
                         child: _buildStatCard(
                           Icons.eco,
-                          '${(userData['huertosRegistrados'] ?? []).length}',
+                          tipoUsuario == 'Administrador'
+                              ? '${(userData['huertosCreados'] ?? []).length}'
+                              : '${(userData['huertosRegistrados'] ?? []).length}',
                           tipoUsuario == 'Administrador'
                               ? 'Huertos\nCreados'
                               : 'Huertos\nRegistrados',
@@ -4628,13 +4634,15 @@ class PerfilScreen extends StatelessWidget {
 
                   const SizedBox(height: 24),
 
-                  //Historial de actividades
+                  //Historial de actividades según tipo de usuario
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text(
-                        'Historial de Actividades',
-                        style: TextStyle(
+                      Text(
+                        tipoUsuario == 'Administrador'
+                            ? 'Actividades Publicadas'
+                            : 'Historial de Actividades',
+                        style: const TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
                           color: Colors.black87,
@@ -4661,9 +4669,11 @@ class PerfilScreen extends StatelessWidget {
                   const SizedBox(height: 16),
 
                   //Lista de actividades o mensaje vacío
-                  actividadesCompletadas.isEmpty
-                      ? _buildEmptyActivities()
-                      : _buildActivityList(actividadesCompletadas),
+                  tipoUsuario == 'Administrador'
+                      ? _buildActividadesPublicadasAdmin(userData)
+                      : (actividadesCompletadas.isEmpty
+                          ? _buildEmptyActivities()
+                          : _buildActivityList(actividadesCompletadas)),
 
                   const SizedBox(height: 30),
                 ],
@@ -4743,6 +4753,77 @@ class PerfilScreen extends StatelessWidget {
       ),
     );
   }
+
+  // Widget para mostrar actividades publicadas por el Admin
+Widget _buildActividadesPublicadasAdmin(Map<String, dynamic> userData) {
+  List<dynamic> actividadesPublicadas = userData['actividadesPublicadas'] ?? [];
+
+  if (actividadesPublicadas.isEmpty) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(40),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Icon(
+            Icons.assignment_outlined,
+            size: 60,
+            color: Colors.grey.shade400,
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'No has publicado actividades',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: Colors.grey.shade600,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Las actividades que publiques\naparecerán aquí',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.grey.shade500,
+              height: 1.4,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Mostrar últimas 3 actividades publicadas
+  return Column(
+    children: List.generate(
+      actividadesPublicadas.length > 3 ? 3 : actividadesPublicadas.length,
+      (index) {
+        var actividad = actividadesPublicadas[index];
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 12),
+          child: _buildActivityCard(
+            actividad['tipo'] ?? 'Actividad',
+            actividad['fecha'] ?? 'Sin fecha',
+            actividad['huerto'] ?? 'Huerto desconocido',
+            Icons.post_add,
+            Colors.blue,
+          ),
+        );
+      },
+    ),
+  );
+}
 
   //Widget para tarjeta de actividad
   Widget _buildActivityCard(
@@ -9170,6 +9251,22 @@ class _CrearActividadScreenState extends State<CrearActividadScreen> {
             'actividades': FieldValue.arrayUnion([actividadRef.id]),
           });
 
+      //Agregar actividad al historial del admin
+      await _firestore
+          .collection('usuarios')
+          .doc(widget.userData['uid'])
+          .update({
+            'actividadesPublicadas': FieldValue.arrayUnion([
+              {
+                'actividadId': actividadRef.id,
+                'tipo': tipoSeleccionado,
+                'fecha': fechaFormateada,
+                'huerto': widget.huertoData['nombre'],
+                'fechaCreacion': DateTime.now().toIso8601String(),
+              }
+            ]),
+          });
+
       setState(() {
         _isLoading = false;
       });
@@ -10730,50 +10827,77 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  // Cargar actividades para Administrador
+  // Cargar actividades para Administrador (solo pendientes o en proceso)
   Future<void> _cargarActividadesAdmin(String uid) async {
     List<Map<String, dynamic>> actividadesList = [];
 
-    // Obtener huertos del admin
-    QuerySnapshot huertosSnapshot = await _firestore
-        .collection('huertos')
-        .where('creadorId', isEqualTo: uid)
-        .get();
-
-    List<String> huertosIds = huertosSnapshot.docs
-        .map((doc) => doc.id)
-        .toList();
-
-    // Obtener actividades de esos huertos
-    if (huertosIds.isNotEmpty) {
-      QuerySnapshot actividadesSnapshot = await _firestore
-          .collection('actividades')
-          .where('huertoId', whereIn: huertosIds)
-          .where('estado', isEqualTo: 'pendiente')
-          .orderBy('fecha', descending: false)
-          .limit(10)
+    try {
+      // Obtener huertos del admin
+      QuerySnapshot huertosSnapshot = await _firestore
+          .collection('huertos')
+          .where('creadorId', isEqualTo: uid)
           .get();
 
-      for (var doc in actividadesSnapshot.docs) {
-        Map<String, dynamic> actividad = doc.data() as Map<String, dynamic>;
-        actividad['id'] = doc.id;
+      List<String> huertosIds = huertosSnapshot.docs.map((doc) => doc.id).toList();
 
-        // Obtener nombre del huerto
-        String huertoId = actividad['huertoId'];
-        DocumentSnapshot huertoDoc = await _firestore
-            .collection('huertos')
-            .doc(huertoId)
-            .get();
-        if (huertoDoc.exists) {
-          actividad['huertoNombre'] =
-              (huertoDoc.data() as Map<String, dynamic>)['nombre'];
+      // Obtener actividades de esos huertos que NO estén completadas
+      if (huertosIds.isNotEmpty) {
+        // NOTA: Como whereIn tiene límite de 10, si tienes más huertos haremos consultas por lotes
+        for (int i = 0; i < huertosIds.length; i += 10) {
+          List<String> lote = huertosIds.skip(i).take(10).toList();
+          
+          QuerySnapshot actividadesSnapshot = await _firestore
+              .collection('actividades')
+              .where('huertoId', whereIn: lote)
+              .get();
+
+          for (var doc in actividadesSnapshot.docs) {
+            Map<String, dynamic> actividad = doc.data() as Map<String, dynamic>;
+            actividad['id'] = doc.id;
+
+            // Obtener nombre del huerto
+            String huertoId = actividad['huertoId'];
+            DocumentSnapshot huertoDoc = await _firestore
+                .collection('huertos')
+                .doc(huertoId)
+                .get();
+            
+            if (huertoDoc.exists) {
+              actividad['huertoNombre'] =
+                  (huertoDoc.data() as Map<String, dynamic>)['nombre'];
+            }
+
+            // Calcular progreso de la actividad
+            List<dynamic> participantes = actividad['participantes'] ?? [];
+            if (participantes.isNotEmpty) {
+              int completadas = participantes.where((p) => p['estado'] == 'completada').length;
+              int total = participantes.length;
+              actividad['progreso'] = '$completadas/$total voluntarios';
+            } else {
+              actividad['progreso'] = 'Sin voluntarios';
+            }
+
+            actividadesList.add(actividad);
+          }
         }
 
-        actividadesList.add(actividad);
-      }
-    }
+        // Ordenar por fecha
+        actividadesList.sort((a, b) {
+          if (a['fecha'] == null || b['fecha'] == null) return 0;
+          return a['fecha'].compareTo(b['fecha']);
+        });
 
-    _actividadesPendientes = actividadesList;
+        // Limitar a 10
+        if (actividadesList.length > 10) {
+          actividadesList = actividadesList.sublist(0, 10);
+        }
+      }
+
+      _actividadesPendientes = actividadesList;
+    } catch (e) {
+      print('Error al cargar actividades admin: $e');
+      _actividadesPendientes = [];
+    }
   }
 
   //Cargar actividades para Voluntario
@@ -11366,6 +11490,27 @@ class _HomeScreenState extends State<HomeScreen> {
                           const SizedBox(width: 4),
                           Text(
                             '$misHoras horas',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey.shade600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+
+                    if (tipoUsuario == 'Administrador' && actividad['progreso'] != null) ...[
+                      const SizedBox(height: 4),
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.people,
+                            size: 14,
+                            color: Colors.grey.shade600,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            actividad['progreso'],
                             style: TextStyle(
                               fontSize: 12,
                               color: Colors.grey.shade600,
