@@ -5605,79 +5605,39 @@ class _HuertosScreenState extends State<HuertosScreen> {
                 ),
                 const SizedBox(height: 16),
 
-                //Botones de acción
-                Row(
-                  children: [
-                    Expanded(
-                      child: OutlinedButton.icon(
-                        //Ver detalles del huerto
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => DetalleHuertoScreen(
-                                huertoData: huerto,
-                                userData: widget.userData,
-                              ),
-                            ),
-                          );
-                        },
-                        icon: Icon(
-                          Icons.visibility,
-                          size: 18,
-                          color: Colors.green.shade700,
-                        ),
-                        label: Text(
-                          'Ver Detalles',
-                          style: TextStyle(
-                            color: Colors.green.shade700,
-                            fontSize: 13,
+                // Botón de acción
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => DetalleHuertoScreen(
+                            huertoData: huerto,
+                            userData: widget.userData,
                           ),
                         ),
-                        style: OutlinedButton.styleFrom(
-                          side: BorderSide(color: Colors.green.shade700),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          padding: const EdgeInsets.symmetric(vertical: 10),
-                        ),
-                      ),
+                      );
+                    },
+                    icon: const Icon(
+                      Icons.arrow_forward,
+                      size: 18,
+                      color: Colors.white,
                     ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: ElevatedButton.icon(
-                        onPressed: () {
-                          //Gestionar huerto
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => DetalleHuertoScreen(
-                                huertoData: huerto,
-                                userData: widget.userData,
-                              ),
-                            ),
-                          );
-                        },
-                        icon: const Icon(
-                          Icons.settings,
-                          size: 18,
-                          color: Colors.white,
-                        ),
-                        label: const Text(
-                          'Gestionar',
-                          style: TextStyle(color: Colors.white, fontSize: 13),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green.shade700,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          padding: const EdgeInsets.symmetric(vertical: 10),
-                          elevation: 0,
-                        ),
-                      ),
+                    label: const Text(
+                      'Ver Huerto',
+                      style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold),
                     ),
-                  ],
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green.shade700,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      elevation: 0,
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -8186,38 +8146,14 @@ class _DetalleHuertoScreenState extends State<DetalleHuertoScreen> {
                           ),
                           const SizedBox(height: 16),
 
-                          //Botón publicar actividades
+                          // Botón Gestionar Actividades
                           _buildActionButton(
                             context,
-                            icon: Icons.add_task,
-                            title: 'Publicar Actividades',
-                            subtitle: 'Crear nuevas tareas para voluntarios',
+                            icon: Icons.assignment,
+                            title: 'Gestionar Actividades',
+                            subtitle: 'Crear, ver y administrar tareas',
                             color: Colors.green,
                             onTap: () {
-                              //Navegar a publicar actividades
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      GestionarActividadesScreen(
-                                        huertoData: huerto,
-                                        userData: widget.userData,
-                                      ),
-                                ),
-                              );
-                            },
-                          ),
-                          const SizedBox(height: 12),
-
-                          //Botón ver estado de actividades
-                          _buildActionButton(
-                            context,
-                            icon: Icons.list_alt,
-                            title: 'Ver Estado de Actividades',
-                            subtitle: 'Revisar progreso y completadas',
-                            color: Colors.blue,
-                            onTap: () {
-                              //Ver estado de actividades
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -11488,7 +11424,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  //Método para cambiar el estado de una actividad (Voluntario)
+  // Método para cambiar el estado de una actividad (Voluntario)
   Future<void> _cambiarEstadoActividad(
     Map<String, dynamic> actividad,
     String nuevoEstado,
@@ -11555,16 +11491,11 @@ class _HomeScreenState extends State<HomeScreen> {
       for (int i = 0; i < participantes.length; i++) {
         if (participantes[i]['uid'] == uid) {
           participantes[i]['estado'] = nuevoEstado;
-          participantes[i]['fechaActualizacion'] = DateTime.now()
-              .toIso8601String();
+          participantes[i]['fechaActualizacion'] =
+              DateTime.now().toIso8601String();
           break;
         }
       }
-
-      // Actualizar en Firebase
-      await _firestore.collection('actividades').doc(actividadId).update({
-        'participantes': participantes,
-      });
 
       // Si se marca como completada, agregar al historial del usuario
       if (nuevoEstado == 'completada') {
@@ -11577,26 +11508,65 @@ class _HomeScreenState extends State<HomeScreen> {
               'fecha': DateTime.now().toIso8601String(),
               'huerto': actividad['huertoNombre'] ?? 'Sin huerto',
               'horas': actividad['misHoras'] ?? 0,
-            },
+            }
           ]),
         });
       }
 
-      // Cerrar loading
-      Navigator.pop(context);
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            nuevoEstado == 'completada'
-                ? '¡Actividad completada! Se agregó a tu historial'
-                : 'Actividad marcada como fallida',
-          ),
-          backgroundColor: nuevoEstado == 'completada'
-              ? Colors.green
-              : Colors.orange,
-        ),
+      // Verificar si TODOS los participantes completaron o fallaron
+      bool todosCompletaron = participantes.every(
+        (p) => p['estado'] == 'completada' || p['estado'] == 'fallida',
       );
+
+      if (todosCompletaron) {
+        // Archivar la actividad (moverla a otra colección)
+        await _firestore.collection('actividades_archivadas').doc(actividadId).set({
+          ...actividadData,
+          'participantes': participantes,
+          'fechaArchivado': FieldValue.serverTimestamp(),
+          'estadoFinal': participantes.every((p) => p['estado'] == 'completada')
+              ? 'completada'
+              : 'parcial',
+        });
+
+        // Eliminar de la colección principal
+        await _firestore.collection('actividades').doc(actividadId).delete();
+
+        // Cerrar loading
+        Navigator.pop(context);
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              nuevoEstado == 'completada'
+                  ? '¡Actividad completada! Todos los voluntarios han finalizado.'
+                  : 'Actividad marcada como fallida',
+            ),
+            backgroundColor:
+                nuevoEstado == 'completada' ? Colors.green : Colors.orange,
+          ),
+        );
+      } else {
+        // Actualizar en Firebase (aún quedan participantes pendientes)
+        await _firestore.collection('actividades').doc(actividadId).update({
+          'participantes': participantes,
+        });
+
+        // Cerrar loading
+        Navigator.pop(context);
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              nuevoEstado == 'completada'
+                  ? '¡Actividad completada! Se agregó a tu historial'
+                  : 'Actividad marcada como fallida',
+            ),
+            backgroundColor:
+                nuevoEstado == 'completada' ? Colors.green : Colors.orange,
+          ),
+        );
+      }
 
       // Recargar actividades
       _cargarActividadesPendientes();
