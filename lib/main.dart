@@ -209,18 +209,21 @@ class WelcomeScreen extends StatelessWidget {
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  shape: BoxShape.circle,
+                  borderRadius: BorderRadius.circular(20),  // ← CAMBIADO
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.grey.withValues(alpha:0.3),
+                      color: Colors.grey.withOpacity(0.3),
                       blurRadius: 15,
                       offset: const Offset(0, 8),
                     ),
                   ],
                 ),
-                child: Image.asset(
-                  'assets/images/hand_png.png',
-                  fit: BoxFit.contain,
+                child: ClipRRect(  // ← AGREGADO
+                  borderRadius: BorderRadius.circular(20),
+                  child: Image.asset(
+                    'assets/images/hand_png.png',
+                    fit: BoxFit.contain,
+                  ),
                 ),
               ),
               const SizedBox(height: 40),
@@ -431,25 +434,28 @@ class _LoginScreenState extends State<LoginScreen> {
               children: [
                 const SizedBox(height: 40),
 
-                //Imagen de bienvenida
+                // Imagen de bienvenida
                 Container(
                   width: 150,
                   height: 150,
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    shape: BoxShape.circle,
+                    borderRadius: BorderRadius.circular(16),  // ← CAMBIADO
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.grey.withValues(alpha:0.2),
+                        color: Colors.grey.withOpacity(0.2),
                         blurRadius: 10,
                         offset: const Offset(0, 5),
                       ),
                     ],
                   ),
-                  child: Image.asset(
-                    'assets/images/hand_png.png',
-                    fit: BoxFit.contain,
+                  child: ClipRRect(  // ← AGREGADO
+                    borderRadius: BorderRadius.circular(16),
+                    child: Image.asset(
+                      'assets/images/hand_png.png',
+                      fit: BoxFit.contain,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 30),
@@ -889,18 +895,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   padding: const EdgeInsets.all(15),
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    shape: BoxShape.circle,
+                    borderRadius: BorderRadius.circular(16),  // ← CAMBIADO
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.grey.withValues(alpha:0.2),
+                        color: Colors.grey.withOpacity(0.2),
                         blurRadius: 10,
                         offset: const Offset(0, 5),
                       ),
                     ],
                   ),
-                  child: Image.asset(
-                    'assets/images/hand_png.png',
-                    fit: BoxFit.contain,
+                  child: ClipRRect(  // ← AGREGADO
+                    borderRadius: BorderRadius.circular(16),
+                    child: Image.asset(
+                      'assets/images/hand_png.png',
+                      fit: BoxFit.contain,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 20),
