@@ -4,7 +4,7 @@ class JardineriaIntermedia {
   
   static const List<Map<String, dynamic>> secciones = [
     {
-      'titulo': '🌾 Rotación de Cultivos',
+      'titulo': 'Rotación de Cultivos',
       'contenido': '''
 La rotación de cultivos consiste en cambiar el tipo de planta que siembras en un mismo espacio después de cada temporada. 
 El objetivo es evitar que el suelo se desgaste y reducir la aparición de plagas o enfermedades que se especializan en ciertas plantas.
@@ -18,7 +18,7 @@ La regla básica es evitar sembrar la misma familia en el mismo sitio durante te
       ''',
     },
     {
-      'titulo': '🪴 Compostaje',
+      'titulo': 'Compostaje',
       'contenido': '''
 El compostaje es un proceso natural donde restos orgánicos se descomponen para formar un abono rico en nutrientes llamado compost. 
 Este material mejora la estructura del suelo, aumenta su fertilidad y ayuda a absorber mejor el agua.
@@ -34,7 +34,7 @@ El compost puede usarse para mejorar macetas, preparar sustratos o enriquecer ca
       ''',
     },
     {
-      'titulo': '✂️ Técnicas de Poda',
+      'titulo': 'Técnicas de Poda',
       'contenido': '''
 La poda es una técnica que ayuda a las plantas a crecer sanas, controlar su forma y estimular nuevas ramas o frutos. 
 Al eliminar partes secas, débiles o mal ubicadas, la planta puede distribuir mejor su energía.
@@ -51,7 +51,7 @@ Al podar, realiza cortes limpios y en ángulo para evitar acumulación de agua y
       ''',
     },
     {
-      'titulo': '🐛 Control de Plagas Orgánico',
+      'titulo': 'Control de Plagas Orgánico',
       'contenido': '''
 El control de plagas orgánico busca reducir insectos dañinos sin utilizar químicos agresivos. 
 La idea es mantener un equilibrio natural en el huerto y proteger a los insectos beneficiosos, como abejas o mariquitas.
@@ -68,7 +68,7 @@ La prevención es clave: revisa tus plantas con frecuencia, evita el exceso de h
       ''',
     },
     {
-      'titulo': '💚 Fertilización Natural',
+      'titulo': 'Fertilización Natural',
       'contenido': '''
 La fertilización natural consiste en aportar nutrientes a las plantas utilizando materiales orgánicos en lugar de fertilizantes químicos. 
 Esto mejora la salud del suelo y promueve un crecimiento más equilibrado.

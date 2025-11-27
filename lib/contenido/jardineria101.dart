@@ -4,7 +4,7 @@ class Jardineria101 {
   
   static const List<Map<String, dynamic>> secciones = [
     {
-      'titulo': '🌱 Introducción a la Jardinería Urbana',
+      'titulo': 'Introducción a la Jardinería Urbana',
       'contenido': '''
 La jardinería urbana es la práctica de cultivar plantas dentro de la ciudad, aprovechando espacios pequeños como balcones, terrazas, patios o incluso ventanas. 
 Su objetivo es acercar la naturaleza a entornos donde normalmente predomina el cemento y el ritmo acelerado.
@@ -17,7 +17,7 @@ Con estos conceptos claros, cualquier persona puede iniciar un pequeño proyecto
       ''',
     },
     {
-      'titulo': '💧 Fundamentos del Riego',
+      'titulo': 'Fundamentos del Riego',
       'contenido': '''
 El riego es uno de los cuidados más importantes en la jardinería. Cada planta tiene necesidades diferentes, pero todas requieren un equilibrio entre humedad 
 y drenaje. Regar demasiado puede pudrir las raíces, mientras que regar poco puede debilitar la planta.
@@ -30,7 +30,7 @@ Si las hojas se ven amarillas o blandas, puede ser exceso de riego; si están se
       ''',
     },
     {
-      'titulo': '🌍 Tipos de Suelo',
+      'titulo': 'Tipos de Suelo',
       'contenido': '''
 El tipo de suelo influye directamente en el crecimiento de las plantas, ya que determina la capacidad de retener agua, aire y nutrientes. 
 Existen tres tipos principales:
@@ -45,7 +45,7 @@ Muchas mezclas comerciales ya vienen preparadas para huertos urbanos y funcionan
       ''',
     },
     {
-      'titulo': '☀️ Luz y Ubicación',
+      'titulo': 'Luz y Ubicación',
       'contenido': '''
 La luz es esencial para que las plantas realicen la fotosíntesis y crezcan fuertes. Antes de elegir qué cultivar, es importante observar cuántas horas de luz 
 recibe tu espacio cada día.
@@ -59,7 +59,7 @@ Si tu espacio tiene poca luz, puedes optar por plantas más tolerantes o complem
       ''',
     },
     {
-      'titulo': '🌿 Primeras Plantas Recomendadas',
+      'titulo': 'Primeras Plantas Recomendadas',
       'contenido': '''
 Para empezar, lo ideal es elegir plantas que no requieran cuidados complicados y que se adapten bien a distintos tipos de clima y espacio.
 

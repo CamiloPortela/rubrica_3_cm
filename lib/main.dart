@@ -212,7 +212,7 @@ class WelcomeScreen extends StatelessWidget {
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.grey.withOpacity(0.3),
+                      color: Colors.grey.withValues(alpha:0.3),
                       blurRadius: 15,
                       offset: const Offset(0, 8),
                     ),
@@ -441,7 +441,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     shape: BoxShape.circle,
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.grey.withOpacity(0.2),
+                        color: Colors.grey.withValues(alpha:0.2),
                         blurRadius: 10,
                         offset: const Offset(0, 5),
                       ),
@@ -892,7 +892,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     shape: BoxShape.circle,
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.grey.withOpacity(0.2),
+                        color: Colors.grey.withValues(alpha:0.2),
                         blurRadius: 10,
                         offset: const Offset(0, 5),
                       ),
@@ -1385,7 +1385,7 @@ class _EstadisticasScreenState extends State<EstadisticasScreen> {
                             shape: BoxShape.circle,
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.grey.withOpacity(0.2),
+                                color: Colors.grey.withValues(alpha:0.2),
                                 blurRadius: 10,
                                 offset: const Offset(0, 5),
                               ),
@@ -1485,7 +1485,7 @@ class _EstadisticasScreenState extends State<EstadisticasScreen> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha:0.1),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -1497,7 +1497,7 @@ class _EstadisticasScreenState extends State<EstadisticasScreen> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: color.withValues(alpha:0.1),
               shape: BoxShape.circle,
             ),
             child: Icon(icono, size: 40, color: color),
@@ -1551,7 +1551,7 @@ class _EstadisticasScreenState extends State<EstadisticasScreen> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha:0.1),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -1716,7 +1716,7 @@ class _EstadisticasScreenState extends State<EstadisticasScreen> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.orange.withOpacity(0.3),
+            color: Colors.orange.withValues(alpha:0.3),
             blurRadius: 10,
             offset: const Offset(0, 5),
           ),
@@ -1729,7 +1729,7 @@ class _EstadisticasScreenState extends State<EstadisticasScreen> {
               Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
+                  color: Colors.white.withValues(alpha:0.2),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: const Icon(
@@ -1765,7 +1765,7 @@ class _EstadisticasScreenState extends State<EstadisticasScreen> {
                 child: CircularProgressIndicator(
                   value: porcentaje,
                   strokeWidth: 12,
-                  backgroundColor: Colors.white.withOpacity(0.3),
+                  backgroundColor: Colors.white.withValues(alpha:0.3),
                   valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
                 ),
               ),
@@ -1799,7 +1799,7 @@ class _EstadisticasScreenState extends State<EstadisticasScreen> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
+              color: Colors.white.withValues(alpha:0.2),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Row(
@@ -1843,7 +1843,7 @@ class _EstadisticasScreenState extends State<EstadisticasScreen> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha:0.1),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -1911,10 +1911,10 @@ class _EstadisticasScreenState extends State<EstadisticasScreen> {
               return Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: colorPosicion.withOpacity(0.05),
+                  color: colorPosicion.withValues(alpha:0.05),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: colorPosicion.withOpacity(0.2),
+                    color: colorPosicion.withValues(alpha:0.2),
                     width: 1,
                   ),
                 ),
@@ -2074,7 +2074,7 @@ class EducacionScreen extends StatelessWidget {
                     shape: BoxShape.circle,
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.grey.withOpacity(0.2),
+                        color: Colors.grey.withValues(alpha:0.2),
                         blurRadius: 10,
                         offset: const Offset(0, 5),
                       ),
@@ -2231,7 +2231,7 @@ class EducacionScreen extends StatelessWidget {
           border: Border.all(color: Colors.grey.shade200),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.1),
+              color: Colors.grey.withValues(alpha:0.1),
               blurRadius: 5,
               offset: const Offset(0, 2),
             ),
@@ -2242,7 +2242,7 @@ class EducacionScreen extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.1),
+                color: color.withValues(alpha:0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(icono, color: color, size: 28),
@@ -2378,7 +2378,7 @@ class ContenidoEducativoScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha:0.1),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -2661,7 +2661,7 @@ class _CapacitacionesScreenState extends State<CapacitacionesScreen> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha:0.1),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -3074,7 +3074,7 @@ class _CrearCapacitacionScreenState extends State<CrearCapacitacionScreen> {
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.grey.withOpacity(0.2),
+                          color: Colors.grey.withValues(alpha:0.2),
                           blurRadius: 10,
                           offset: const Offset(0, 5),
                         ),
@@ -3642,7 +3642,7 @@ class _CalendarioEventosScreenState extends State<CalendarioEventosScreen> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha:0.1),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -3655,7 +3655,7 @@ class _CalendarioEventosScreenState extends State<CalendarioEventosScreen> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: colorTipo.withOpacity(0.1),
+              color: colorTipo.withValues(alpha:0.1),
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(16),
                 topRight: Radius.circular(16),
@@ -3666,7 +3666,7 @@ class _CalendarioEventosScreenState extends State<CalendarioEventosScreen> {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: colorTipo.withOpacity(0.2),
+                    color: colorTipo.withValues(alpha:0.2),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Icon(iconoTipo, color: colorTipo, size: 24),
@@ -3682,7 +3682,7 @@ class _CalendarioEventosScreenState extends State<CalendarioEventosScreen> {
                           vertical: 4,
                         ),
                         decoration: BoxDecoration(
-                          color: colorTipo.withOpacity(0.2),
+                          color: colorTipo.withValues(alpha:0.2),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(
@@ -4048,7 +4048,7 @@ class _CrearEventoScreenState extends State<CrearEventoScreen> {
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.grey.withOpacity(0.2),
+                          color: Colors.grey.withValues(alpha:0.2),
                           blurRadius: 10,
                           offset: const Offset(0, 5),
                         ),
@@ -4429,7 +4429,7 @@ class PerfilScreen extends StatelessWidget {
                       color: Colors.white,
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.2),
+                          color: Colors.black.withValues(alpha:0.2),
                           blurRadius: 10,
                           offset: const Offset(0, 5),
                         ),
@@ -4468,10 +4468,10 @@ class PerfilScreen extends StatelessWidget {
                       vertical: 8,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.3),
+                      color: Colors.white.withValues(alpha:0.3),
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(
-                        color: Colors.white.withOpacity(0.5),
+                        color: Colors.white.withValues(alpha:0.5),
                         width: 1,
                       ),
                     ),
@@ -4594,7 +4594,7 @@ class PerfilScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.grey.withOpacity(0.1),
+                          color: Colors.grey.withValues(alpha:0.1),
                           blurRadius: 10,
                           offset: const Offset(0, 2),
                         ),
@@ -4672,7 +4672,7 @@ class PerfilScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha:0.1),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -4746,7 +4746,7 @@ class PerfilScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha:0.1),
             blurRadius: 5,
             offset: const Offset(0, 2),
           ),
@@ -4757,7 +4757,7 @@ class PerfilScreen extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: color.withValues(alpha:0.1),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Icon(icon, color: color, size: 24),
@@ -4840,7 +4840,7 @@ class PerfilScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha:0.1),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -4905,7 +4905,7 @@ class PerfilScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha:0.1),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -4916,7 +4916,7 @@ class PerfilScreen extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: color.withValues(alpha:0.1),
               shape: BoxShape.circle,
             ),
             child: Icon(icon, color: color, size: 28),
@@ -5084,7 +5084,7 @@ class _HuertosScreenState extends State<HuertosScreen> {
                     shape: BoxShape.circle,
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.grey.withOpacity(0.2),
+                        color: Colors.grey.withValues(alpha:0.2),
                         blurRadius: 10,
                         offset: const Offset(0, 5),
                       ),
@@ -5214,7 +5214,7 @@ class _HuertosScreenState extends State<HuertosScreen> {
                     shape: BoxShape.circle,
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.grey.withOpacity(0.2),
+                        color: Colors.grey.withValues(alpha:0.2),
                         blurRadius: 10,
                         offset: const Offset(0, 5),
                       ),
@@ -5333,7 +5333,7 @@ class _HuertosScreenState extends State<HuertosScreen> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha:0.1),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -5379,7 +5379,7 @@ class _HuertosScreenState extends State<HuertosScreen> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha:0.1),
             blurRadius: 5,
             offset: const Offset(0, 2),
           ),
@@ -5444,7 +5444,7 @@ class _HuertosScreenState extends State<HuertosScreen> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha:0.1),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -5491,7 +5491,7 @@ class _HuertosScreenState extends State<HuertosScreen> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha:0.1),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -5518,7 +5518,7 @@ class _HuertosScreenState extends State<HuertosScreen> {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.3),
+                    color: Colors.white.withValues(alpha:0.3),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: const Icon(Icons.eco, color: Colors.white, size: 28),
@@ -5542,13 +5542,13 @@ class _HuertosScreenState extends State<HuertosScreen> {
                           Icon(
                             Icons.person,
                             size: 14,
-                            color: Colors.white.withOpacity(0.9),
+                            color: Colors.white.withValues(alpha:0.9),
                           ),
                           const SizedBox(width: 4),
                           Text(
                             '$numVoluntarios voluntarios',
                             style: TextStyle(
-                              color: Colors.white.withOpacity(0.9),
+                              color: Colors.white.withValues(alpha:0.9),
                               fontSize: 13,
                             ),
                           ),
@@ -5563,7 +5563,7 @@ class _HuertosScreenState extends State<HuertosScreen> {
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.3),
+                    color: Colors.white.withValues(alpha:0.3),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
@@ -5878,7 +5878,7 @@ class _BuscarHuertosScreenState extends State<BuscarHuertosScreen> {
               style: const TextStyle(color: Colors.white),
               decoration: InputDecoration(
                 hintText: 'Buscar por nombre o zona...',
-                hintStyle: TextStyle(color: Colors.white.withOpacity(0.7)),
+                hintStyle: TextStyle(color: Colors.white.withValues(alpha:0.7)),
                 prefixIcon: const Icon(Icons.search, color: Colors.white),
                 suffixIcon: _isSearching
                     ? IconButton(
@@ -5890,7 +5890,7 @@ class _BuscarHuertosScreenState extends State<BuscarHuertosScreen> {
                       )
                     : null,
                 filled: true,
-                fillColor: Colors.white.withOpacity(0.2),
+                fillColor: Colors.white.withValues(alpha:0.2),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                   borderSide: BorderSide.none,
@@ -5979,7 +5979,7 @@ class _BuscarHuertosScreenState extends State<BuscarHuertosScreen> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha:0.1),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -6006,7 +6006,7 @@ class _BuscarHuertosScreenState extends State<BuscarHuertosScreen> {
               child: Icon(
                 Icons.eco,
                 size: 60,
-                color: Colors.white.withOpacity(0.5),
+                color: Colors.white.withValues(alpha:0.5),
               ),
             ),
           ),
@@ -6419,7 +6419,7 @@ class _DetalleHuertoVoluntarioScreenState
               child: Icon(
                 Icons.eco,
                 size: 100,
-                color: Colors.white.withOpacity(0.5),
+                color: Colors.white.withValues(alpha:0.5),
               ),
             ),
           ),
@@ -6558,7 +6558,7 @@ class _DetalleHuertoVoluntarioScreenState
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha:0.1),
             blurRadius: 5,
             offset: const Offset(0, 2),
           ),
@@ -6597,7 +6597,7 @@ class _DetalleHuertoVoluntarioScreenState
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: (statusColor ?? Colors.green.shade700).withOpacity(0.1),
+              color: (statusColor ?? Colors.green.shade700).withValues(alpha:0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(
@@ -6650,7 +6650,7 @@ class _DetalleHuertoVoluntarioScreenState
             : null,
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha:0.1),
             blurRadius: 5,
             offset: const Offset(0, 2),
           ),
@@ -6765,7 +6765,7 @@ class _DetalleHuertoVoluntarioScreenState
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha:0.1),
             blurRadius: 5,
             offset: const Offset(0, 2),
           ),
@@ -6776,7 +6776,7 @@ class _DetalleHuertoVoluntarioScreenState
         leading: Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
+            color: color.withValues(alpha:0.1),
             borderRadius: BorderRadius.circular(10),
           ),
           child: Icon(icono, color: color, size: 28),
@@ -7133,7 +7133,7 @@ class _DetalleActividadScreenState extends State<DetalleActividadScreen> {
                         borderRadius: BorderRadius.circular(16),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.grey.withOpacity(0.1),
+                            color: Colors.grey.withValues(alpha:0.1),
                             blurRadius: 10,
                             offset: const Offset(0, 2),
                           ),
@@ -7145,7 +7145,7 @@ class _DetalleActividadScreenState extends State<DetalleActividadScreen> {
                           Container(
                             padding: const EdgeInsets.all(20),
                             decoration: BoxDecoration(
-                              color: color.withOpacity(0.1),
+                              color: color.withValues(alpha:0.1),
                               shape: BoxShape.circle,
                             ),
                             child: Icon(icono, size: 60, color: color),
@@ -7196,7 +7196,7 @@ class _DetalleActividadScreenState extends State<DetalleActividadScreen> {
                         borderRadius: BorderRadius.circular(12),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.grey.withOpacity(0.1),
+                            color: Colors.grey.withValues(alpha:0.1),
                             blurRadius: 5,
                             offset: const Offset(0, 2),
                           ),
@@ -7236,7 +7236,7 @@ class _DetalleActividadScreenState extends State<DetalleActividadScreen> {
                           borderRadius: BorderRadius.circular(12),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.grey.withOpacity(0.1),
+                              color: Colors.grey.withValues(alpha:0.1),
                               blurRadius: 5,
                               offset: const Offset(0, 2),
                             ),
@@ -7592,7 +7592,7 @@ Future<void> _crearHuerto() async {
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.grey.withOpacity(0.2),
+                          color: Colors.grey.withValues(alpha:0.2),
                           blurRadius: 10,
                           offset: const Offset(0, 5),
                         ),
@@ -7976,7 +7976,7 @@ class _DetalleHuertoScreenState extends State<DetalleHuertoScreen> {
                                 shape: BoxShape.circle,
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.black.withOpacity(0.2),
+                                    color: Colors.black.withValues(alpha:0.2),
                                     blurRadius: 10,
                                     offset: const Offset(0, 5),
                                   ),
@@ -7997,10 +7997,10 @@ class _DetalleHuertoScreenState extends State<DetalleHuertoScreen> {
                                 vertical: 8,
                               ),
                               decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.3),
+                                color: Colors.white.withValues(alpha:0.3),
                                 borderRadius: BorderRadius.circular(20),
                                 border: Border.all(
-                                  color: Colors.white.withOpacity(0.5),
+                                  color: Colors.white.withValues(alpha:0.5),
                                   width: 1,
                                 ),
                               ),
@@ -8067,7 +8067,7 @@ class _DetalleHuertoScreenState extends State<DetalleHuertoScreen> {
                               borderRadius: BorderRadius.circular(16),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.grey.withOpacity(0.1),
+                                  color: Colors.grey.withValues(alpha:0.1),
                                   blurRadius: 10,
                                   offset: const Offset(0, 2),
                                 ),
@@ -8116,7 +8116,7 @@ class _DetalleHuertoScreenState extends State<DetalleHuertoScreen> {
                               borderRadius: BorderRadius.circular(16),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.grey.withOpacity(0.1),
+                                  color: Colors.grey.withValues(alpha:0.1),
                                   blurRadius: 10,
                                   offset: const Offset(0, 2),
                                 ),
@@ -8237,7 +8237,7 @@ class _DetalleHuertoScreenState extends State<DetalleHuertoScreen> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha:0.1),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -8248,7 +8248,7 @@ class _DetalleHuertoScreenState extends State<DetalleHuertoScreen> {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: color.withValues(alpha:0.1),
               shape: BoxShape.circle,
             ),
             child: Icon(icon, color: color, size: 28),
@@ -8334,7 +8334,7 @@ class _DetalleHuertoScreenState extends State<DetalleHuertoScreen> {
           border: Border.all(color: Colors.grey.shade200),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.1),
+              color: Colors.grey.withValues(alpha:0.1),
               blurRadius: 5,
               offset: const Offset(0, 2),
             ),
@@ -8345,7 +8345,7 @@ class _DetalleHuertoScreenState extends State<DetalleHuertoScreen> {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.1),
+                color: color.withValues(alpha:0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(icon, color: color, size: 26),
@@ -8586,7 +8586,7 @@ class _GestionarActividadesScreenState
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha:0.1),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -8598,7 +8598,7 @@ class _GestionarActividadesScreenState
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: tipoColor.withOpacity(0.1),
+              color: tipoColor.withValues(alpha:0.1),
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(16),
                 topRight: Radius.circular(16),
@@ -8609,7 +8609,7 @@ class _GestionarActividadesScreenState
                 Container(
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: tipoColor.withOpacity(0.2),
+                    color: tipoColor.withValues(alpha:0.2),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Icon(tipoIcon, color: tipoColor, size: 24),
@@ -8644,7 +8644,7 @@ class _GestionarActividadesScreenState
                     vertical: 6,
                   ),
                   decoration: BoxDecoration(
-                    color: estadoColor.withOpacity(0.2),
+                    color: estadoColor.withValues(alpha:0.2),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
@@ -9838,7 +9838,7 @@ class _AsignarVoluntariosScreenState extends State<AsignarVoluntariosScreen> {
             : null,
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha:0.1),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -10338,7 +10338,7 @@ class _ListaVoluntariosScreenState extends State<ListaVoluntariosScreen> {
                                   vertical: 8,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.2),
+                                  color: Colors.white.withValues(alpha:0.2),
                                   borderRadius: BorderRadius.circular(20),
                                 ),
                                 child: Row(
@@ -10469,7 +10469,7 @@ class _ListaVoluntariosScreenState extends State<ListaVoluntariosScreen> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha:0.1),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -10880,7 +10880,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       vertical: 3,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.3),
+                      color: Colors.white.withValues(alpha:0.3),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
@@ -11030,7 +11030,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.green.withOpacity(0.3),
+                        color: Colors.green.withValues(alpha:0.3),
                         blurRadius: 10,
                         offset: const Offset(0, 5),
                       ),
@@ -11059,7 +11059,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           vertical: 6,
                         ),
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.2),
+                          color: Colors.white.withValues(alpha:0.2),
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Text(
@@ -11256,7 +11256,7 @@ class _HomeScreenState extends State<HomeScreen> {
             : null,
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha:0.1),
             blurRadius: 5,
             offset: const Offset(0, 2),
           ),
@@ -11270,7 +11270,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
+                  color: color.withValues(alpha:0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Icon(icono, color: color, size: 28),
@@ -11336,7 +11336,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: estadoColor.withOpacity(0.1),
+                    color: estadoColor.withValues(alpha:0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Row(

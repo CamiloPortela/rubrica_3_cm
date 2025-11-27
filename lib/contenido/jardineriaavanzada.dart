@@ -4,7 +4,7 @@ class JardineriaAvanzada {
   
   static const List<Map<String, dynamic>> secciones = [
     {
-      'titulo': '🔬 Análisis de Suelo Avanzado',
+      'titulo': 'Análisis de Suelo Avanzado',
       'contenido': '''
 El análisis avanzado del suelo permite evaluar en profundidad su composición química, física y biológica. 
 Esto es fundamental para cultivos exigentes y para optimizar el rendimiento en espacios urbanos, donde la calidad del sustrato puede variar considerablemente.
@@ -28,7 +28,7 @@ El manejo adecuado del suelo permite cultivar especies más sensibles y obtener 
       ''',
     },
     {
-      'titulo': '🌡️ Microclimas Urbanos',
+      'titulo': 'Microclimas Urbanos',
       'contenido': '''
 En entornos urbanos, los microclimas son variaciones locales de temperatura, humedad, viento y luz generadas por la arquitectura, materiales y orientación del sitio. 
 Comprender estos microclimas permite seleccionar especies más apropiadas y aumentar la eficiencia del cultivo.
@@ -47,7 +47,7 @@ La gestión precisa de microclimas permite cultivar incluso especies no típicas
       ''',
     },
     {
-      'titulo': '🧬 Propagación Avanzada',
+      'titulo': 'Propagación Avanzada',
       'contenido': '''
 La propagación avanzada permite obtener nuevas plantas con características específicas, mejorar la productividad y mantener variedades difíciles de encontrar. 
 Es fundamental para jardineros avanzados que buscan ampliar su colección o reproducir especies valiosas.
@@ -66,7 +66,7 @@ Estas técnicas permiten reproducir de forma eficiente cultivos avanzados y mant
       ''',
     },
     {
-      'titulo': '💦 Sistemas de Riego Automatizado',
+      'titulo': 'Sistemas de Riego Automatizado',
       'contenido': '''
 Los sistemas de riego automatizado permiten mantener una hidratación precisa y constante, especialmente útil en cultivos urbanos donde el tiempo 
 o la disponibilidad de agua pueden ser limitados.
@@ -85,7 +85,7 @@ de agua y lograr un cultivo más estable y profesional.
       ''',
     },
     {
-      'titulo': '📊 Planificación de Producción',
+      'titulo': 'Planificación de Producción',
       'contenido': '''
 La planificación de producción en jardinería avanzada implica organizar el cultivo para maximizar rendimiento, continuidad y eficiencia del espacio. 
 Se basa en datos, calendarios y observaciones periódicas.
