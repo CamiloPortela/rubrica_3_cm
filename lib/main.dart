@@ -5593,7 +5593,7 @@ class _HuertosScreenState extends State<HuertosScreen> {
     );
   }
 
-  //Widget para card de huerto
+  //Widget para card huerto
   Widget _buildHuertoCard(Map<String, dynamic> huerto) {
     String nombre = huerto['nombre'] ?? 'Sin nombre';
     String tamano = huerto['tamaño'] ?? 'No especificado';
