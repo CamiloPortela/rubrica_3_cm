@@ -1181,6 +1181,13 @@ class _EstadisticasScreenState extends State<EstadisticasScreen> {
     _cargarEstadisticas();
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Recargar estadísticas cada vez que se muestra la pantalla
+    _cargarEstadisticas();
+  }
+
   Future<void> _cargarEstadisticas() async {
     setState(() {
       _isLoading = true;
