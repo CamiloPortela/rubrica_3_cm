@@ -1233,6 +1233,7 @@ class _EstadisticasScreenState extends State<EstadisticasScreen> {
   }
 
   // Cargar horas acumuladas según tipo de usuario
+// Cargar horas acumuladas segÃºn tipo de usuario
   Future<void> _cargarHorasAcumuladas() async {
     try {
       int totalHoras = 0;
@@ -1251,7 +1252,7 @@ class _EstadisticasScreenState extends State<EstadisticasScreen> {
             .toList();
 
         if (huertosIds.isNotEmpty) {
-          // Obtener todas las actividades de esos huertos
+          // Obtener todas las actividades ACTIVAS de esos huertos
           QuerySnapshot actividadesSnapshot = await _firestore
               .collection('actividades')
               .where('huertoId', whereIn: huertosIds)
@@ -1273,32 +1274,43 @@ class _EstadisticasScreenState extends State<EstadisticasScreen> {
               }
             }
           }
+          
+          // TAMBIÉN buscar en actividades ARCHIVADAS
+          QuerySnapshot actividadesArchivadas = await _firestore
+              .collection('actividades_archivadas')
+              .where('huertoId', whereIn: huertosIds)
+              .get();
+
+          for (var doc in actividadesArchivadas.docs) {
+            Map<String, dynamic> actividad = doc.data() as Map<String, dynamic>;
+            List<dynamic> participantes = actividad['participantes'] ?? [];
+
+            for (var participante in participantes) {
+              String estadoParticipante = participante['estado'] ?? 'pendiente';
+
+              if (estadoParticipante == 'completada') {
+                double horas = (participante['horasComprometidas'] ?? 0)
+                    .toDouble();
+                totalHoras += horas.toInt();
+              }
+            }
+          }
         }
       } else {
         // Para voluntario: contar SOLO sus horas de actividades completadas
-        QuerySnapshot actividadesSnapshot = await _firestore
-            .collection('actividades')
+        // Leer directamente del array actividadesCompletadas
+        DocumentSnapshot userDoc = await _firestore
+            .collection('usuarios')
+            .doc(uid)
             .get();
 
-        for (var doc in actividadesSnapshot.docs) {
-          Map<String, dynamic> actividad = doc.data() as Map<String, dynamic>;
-          List<dynamic> participantes = actividad['participantes'] ?? [];
+        if (userDoc.exists) {
+          Map<String, dynamic> userData = userDoc.data() as Map<String, dynamic>;
+          List<dynamic> actividadesCompletadas = userData['actividadesCompletadas'] ?? [];
 
-          // Buscar si el usuario está en los participantes
-          var miParticipacion = participantes.firstWhere(
-            (p) => p['uid'] == uid,
-            orElse: () => null,
-          );
-
-          if (miParticipacion != null) {
-            String miEstado = miParticipacion['estado'] ?? 'pendiente';
-
-            // SOLO sumar si está completada
-            if (miEstado == 'completada') {
-              double horas = (miParticipacion['horasComprometidas'] ?? 0)
-                  .toDouble();
-              totalHoras += horas.toInt();
-            }
+          for (var actividad in actividadesCompletadas) {
+            double horas = (actividad['horas'] ?? 0).toDouble();
+            totalHoras += horas.toInt();
           }
         }
       }
