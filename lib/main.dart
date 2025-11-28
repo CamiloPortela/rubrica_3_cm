@@ -4541,9 +4541,13 @@ class PerfilScreen extends StatelessWidget {
                     children: [
                       Expanded(
                         child: _buildStatCard(
-                          Icons.task_alt,
-                          '${actividadesCompletadas.length}',
-                          'Actividades\nCompletadas',
+                          tipoUsuario == 'Administrador' ? Icons.post_add : Icons.task_alt,
+                          tipoUsuario == 'Administrador'
+                              ? '${(userData['actividadesPublicadas'] ?? []).length}'
+                              : '${actividadesCompletadas.length}',
+                          tipoUsuario == 'Administrador'
+                              ? 'Actividades\nPublicadas'
+                              : 'Actividades\nCompletadas',
                           Colors.green,
                         ),
                       ),
@@ -4551,7 +4555,9 @@ class PerfilScreen extends StatelessWidget {
                       Expanded(
                         child: _buildStatCard(
                           Icons.eco,
-                          '${(userData['huertosRegistrados'] ?? []).length}',
+                          tipoUsuario == 'Administrador'
+                              ? '${(userData['huertosCreados'] ?? []).length}'
+                              : '${(userData['huertosRegistrados'] ?? []).length}',
                           tipoUsuario == 'Administrador'
                               ? 'Huertos\nCreados'
                               : 'Huertos\nRegistrados',
@@ -4618,7 +4624,7 @@ class PerfilScreen extends StatelessWidget {
                       ],
                     ),
                     child: Text(
-                      //Descripción según tipo de usuario por defecto
+                      //Descripción según tipo de usuario genérica
                       tipoUsuario == 'Administrador'
                           ? 'Como administrador, gestiono y organizo los huertos comunitarios, asigno tareas y coordino las actividades de los voluntarios.'
                           : 'Como voluntario, participo activamente en las labores de los huertos comunitarios, contribuyendo al desarrollo sostenible de mi comunidad.',
@@ -4632,13 +4638,15 @@ class PerfilScreen extends StatelessWidget {
 
                   const SizedBox(height: 24),
 
-                  //Historial de actividades
+                  //Historial de actividades según tipo de usuario
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text(
-                        'Historial de Actividades',
-                        style: TextStyle(
+                      Text(
+                        tipoUsuario == 'Administrador'
+                            ? 'Actividades Publicadas'
+                            : 'Historial de Actividades',
+                        style: const TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
                           color: Colors.black87,
@@ -4665,9 +4673,11 @@ class PerfilScreen extends StatelessWidget {
                   const SizedBox(height: 16),
 
                   //Lista de actividades o mensaje vacío
-                  actividadesCompletadas.isEmpty
-                      ? _buildEmptyActivities()
-                      : _buildActivityList(actividadesCompletadas),
+                  tipoUsuario == 'Administrador'
+                      ? _buildActividadesPublicadasAdmin(userData)
+                      : (actividadesCompletadas.isEmpty
+                          ? _buildEmptyActivities()
+                          : _buildActivityList(actividadesCompletadas)),
 
                   const SizedBox(height: 30),
                 ],
@@ -4747,6 +4757,77 @@ class PerfilScreen extends StatelessWidget {
       ),
     );
   }
+
+  // Widget para mostrar actividades publicadas por el Admin
+Widget _buildActividadesPublicadasAdmin(Map<String, dynamic> userData) {
+  List<dynamic> actividadesPublicadas = userData['actividadesPublicadas'] ?? [];
+
+  if (actividadesPublicadas.isEmpty) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(40),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Icon(
+            Icons.assignment_outlined,
+            size: 60,
+            color: Colors.grey.shade400,
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'No has publicado actividades',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: Colors.grey.shade600,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Las actividades que publiques\naparecerán aquí',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.grey.shade500,
+              height: 1.4,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Mostrar últimas 3 actividades publicadas
+  return Column(
+    children: List.generate(
+      actividadesPublicadas.length > 3 ? 3 : actividadesPublicadas.length,
+      (index) {
+        var actividad = actividadesPublicadas[index];
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 12),
+          child: _buildActivityCard(
+            actividad['tipo'] ?? 'Actividad',
+            actividad['fecha'] ?? 'Sin fecha',
+            actividad['huerto'] ?? 'Huerto desconocido',
+            Icons.post_add,
+            Colors.blue,
+          ),
+        );
+      },
+    ),
+  );
+}
 
   //Widget para tarjeta de actividad
   Widget _buildActivityCard(
@@ -8877,96 +8958,184 @@ class _GestionarActividadesScreenState
 
   //Cambiar estado de actividad
   void _cambiarEstadoActividad(Map<String, dynamic> actividad) {
-    String estadoActual = actividad['estado'] ?? 'pendiente';
-    String? nuevoEstado;
+  String estadoActual = actividad['estado'] ?? 'pendiente';
+  String? nuevoEstado;
 
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Cambiar Estado'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              title: const Text('Pendiente'),
-              leading: Radio<String>(
-                value: 'pendiente',
-                groupValue: estadoActual,
-                onChanged: (value) {
-                  nuevoEstado = value;
-                  Navigator.pop(context);
-                },
-              ),
+  showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: const Text('Cambiar Estado de Actividad'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ListTile(
+            title: const Text('Pendiente'),
+            leading: Radio<String>(
+              value: 'pendiente',
+              groupValue: estadoActual,
+              onChanged: (value) {
+                nuevoEstado = value;
+                Navigator.pop(context);
+              },
             ),
-            ListTile(
-              title: const Text('En Proceso'),
-              leading: Radio<String>(
-                value: 'en_proceso',
-                groupValue: estadoActual,
-                onChanged: (value) {
-                  nuevoEstado = value;
-                  Navigator.pop(context);
-                },
-              ),
+          ),
+          ListTile(
+            title: const Text('En Proceso'),
+            leading: Radio<String>(
+              value: 'en_proceso',
+              groupValue: estadoActual,
+              onChanged: (value) {
+                nuevoEstado = value;
+                Navigator.pop(context);
+              },
             ),
-            ListTile(
-              title: const Text('Completada'),
-              leading: Radio<String>(
-                value: 'completada',
-                groupValue: estadoActual,
-                onChanged: (value) {
-                  nuevoEstado = value;
-                  Navigator.pop(context);
-                },
-              ),
+          ),
+          const Divider(),
+          ListTile(
+            title: const Text('Completada'),
+            leading: Radio<String>(
+              value: 'completada',
+              groupValue: estadoActual,
+              onChanged: (value) {
+                nuevoEstado = value;
+                Navigator.pop(context);
+              },
             ),
-            ListTile(
-              title: const Text('Fallida'),
-              leading: Radio<String>(
-                value: 'fallida',
-                groupValue: estadoActual,
-                onChanged: (value) {
-                  nuevoEstado = value;
-                  Navigator.pop(context);
-                },
-              ),
+          ),
+          ListTile(
+            title: const Text('Fallida'),
+            leading: Radio<String>(
+              value: 'fallida',
+              groupValue: estadoActual,
+              onChanged: (value) {
+                nuevoEstado = value;
+                Navigator.pop(context);
+              },
             ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancelar'),
           ),
         ],
       ),
-    ).then((_) async {
-      if (nuevoEstado != null && nuevoEstado != estadoActual) {
-        try {
-          await _firestore
-              .collection('actividades')
-              .doc(actividad['id'])
-              .update({'estado': nuevoEstado});
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Cancelar'),
+        ),
+      ],
+    ),
+  ).then((_) async {
+    if (nuevoEstado != null && nuevoEstado != estadoActual) {
+      await _procesarCambioEstado(actividad, nuevoEstado!);
+    }
+  });
+}
 
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Estado actualizado correctamente'),
-              backgroundColor: Colors.green,
-            ),
-          );
+Future<void> _procesarCambioEstado(
+  Map<String, dynamic> actividad,
+  String nuevoEstado,
+) async {
+  String actividadId = actividad['id'];
 
-          _cargarActividades();
-        } catch (e) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Error al actualizar: $e'),
-              backgroundColor: Colors.red,
-            ),
-          );
-        }
-      }
-    });
+  //Mostrar loading
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (context) => const Center(child: CircularProgressIndicator()),
+  );
+
+  try {
+    //Si se marca como completada o fallida, archivar
+    if (nuevoEstado == 'completada' || nuevoEstado == 'fallida') {
+      await _archivarActividad(actividad, nuevoEstado);
+    } else {
+      //Solo actualizar el estado (pendiente o en_proceso)
+      await _firestore.collection('actividades').doc(actividadId).update({
+        'estado': nuevoEstado,
+      });
+    }
+
+    //Cerrar loading
+    Navigator.pop(context);
+
+    String mensaje;
+    if (nuevoEstado == 'completada') {
+      mensaje = 'Actividad completada y archivada. Estadísticas guardadas.';
+    } else if (nuevoEstado == 'fallida') {
+      mensaje = 'Actividad marcada como fallida y archivada.';
+    } else {
+      mensaje = 'Estado actualizado correctamente';
+    }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(mensaje),
+        backgroundColor: nuevoEstado == 'fallida' ? Colors.orange : Colors.green,
+      ),
+    );
+
+    //Recargar lista
+    _cargarActividades();
+  } catch (e) {
+    //Cerrar loading
+    Navigator.pop(context);
+
+    print('Error al cambiar estado: $e');
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Error al cambiar estado: $e'),
+        backgroundColor: Colors.red,
+      ),
+    );
   }
+}
+
+Future<void> _archivarActividad(
+  Map<String, dynamic> actividad,
+  String estadoFinal,
+) async {
+  String actividadId = actividad['id'];
+  List<dynamic> participantes = actividad['participantes'] ?? [];
+
+  //Si se marca como ccompleta, se guardan las estadísticas
+  if (estadoFinal == 'completada') {
+    for (var participante in participantes) {
+      String uid = participante['uid'];
+      double horas = (participante['horasComprometidas'] ?? 0).toDouble();
+
+      //Marcar como completada para el participante si aún no lo está
+      if (participante['estado'] != 'completada') {
+        participante['estado'] = 'completada';
+        participante['fechaActualizacion'] = DateTime.now().toIso8601String();
+      }
+
+      //Agregar al historial del voluntario
+      await _firestore.collection('usuarios').doc(uid).update({
+        'actividadesCompletadas': FieldValue.arrayUnion([
+          {
+            'actividadId': actividadId,
+            'titulo': actividad['tipo'] ?? 'Actividad',
+            'tipo': actividad['tipo'] ?? 'general',
+            'fecha': DateTime.now().toIso8601String(),
+            'huerto': actividad['huertoNombre'] ?? 'Sin huerto',
+            'horas': horas,
+          }
+        ]),
+      });
+    }
+  }
+
+  //Archivar la actividad
+    //Si se marca como fallida, no guarda estadísticas
+  await _firestore.collection('actividades_archivadas').doc(actividadId).set({
+    ...actividad,
+    'participantes': participantes,
+    'fechaArchivado': FieldValue.serverTimestamp(),
+    'estadoFinal': estadoFinal,
+    'archivaoPorAdmin': true,
+  });
+
+  //Eliminar de la colección principal
+  await _firestore.collection('actividades').doc(actividadId).delete();
+}
 
   //Color según estado
   Color _getEstadoColor(String estado) {
@@ -9172,6 +9341,22 @@ class _CrearActividadScreenState extends State<CrearActividadScreen> {
           .doc(widget.huertoData['id'])
           .update({
             'actividades': FieldValue.arrayUnion([actividadRef.id]),
+          });
+
+      //Agregar actividad al historial del admin
+      await _firestore
+          .collection('usuarios')
+          .doc(widget.userData['uid'])
+          .update({
+            'actividadesPublicadas': FieldValue.arrayUnion([
+              {
+                'actividadId': actividadRef.id,
+                'tipo': tipoSeleccionado,
+                'fecha': fechaFormateada,
+                'huerto': widget.huertoData['nombre'],
+                'fechaCreacion': DateTime.now().toIso8601String(),
+              }
+            ]),
           });
 
       setState(() {
@@ -10692,7 +10877,7 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   final AuthService _authService = AuthService();
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
@@ -10702,7 +10887,22 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _cargarActividadesPendientes();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      // La app volvió al primer plano, recargar datos
+      _cargarActividadesPendientes();
+    }
   }
 
   // Cargar actividades pendientes según tipo de usuario
@@ -10734,50 +10934,77 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  // Cargar actividades para Administrador
+  // Cargar actividades para Administrador (solo pendientes o en proceso)
   Future<void> _cargarActividadesAdmin(String uid) async {
     List<Map<String, dynamic>> actividadesList = [];
 
-    // Obtener huertos del admin
-    QuerySnapshot huertosSnapshot = await _firestore
-        .collection('huertos')
-        .where('creadorId', isEqualTo: uid)
-        .get();
-
-    List<String> huertosIds = huertosSnapshot.docs
-        .map((doc) => doc.id)
-        .toList();
-
-    // Obtener actividades de esos huertos
-    if (huertosIds.isNotEmpty) {
-      QuerySnapshot actividadesSnapshot = await _firestore
-          .collection('actividades')
-          .where('huertoId', whereIn: huertosIds)
-          .where('estado', isEqualTo: 'pendiente')
-          .orderBy('fecha', descending: false)
-          .limit(10)
+    try {
+      // Obtener huertos del admin
+      QuerySnapshot huertosSnapshot = await _firestore
+          .collection('huertos')
+          .where('creadorId', isEqualTo: uid)
           .get();
 
-      for (var doc in actividadesSnapshot.docs) {
-        Map<String, dynamic> actividad = doc.data() as Map<String, dynamic>;
-        actividad['id'] = doc.id;
+      List<String> huertosIds = huertosSnapshot.docs.map((doc) => doc.id).toList();
 
-        // Obtener nombre del huerto
-        String huertoId = actividad['huertoId'];
-        DocumentSnapshot huertoDoc = await _firestore
-            .collection('huertos')
-            .doc(huertoId)
-            .get();
-        if (huertoDoc.exists) {
-          actividad['huertoNombre'] =
-              (huertoDoc.data() as Map<String, dynamic>)['nombre'];
+      // Obtener actividades de esos huertos que NO estén completadas
+      if (huertosIds.isNotEmpty) {
+        // NOTA: Como whereIn tiene límite de 10, si tienes más huertos haremos consultas por lotes
+        for (int i = 0; i < huertosIds.length; i += 10) {
+          List<String> lote = huertosIds.skip(i).take(10).toList();
+          
+          QuerySnapshot actividadesSnapshot = await _firestore
+              .collection('actividades')
+              .where('huertoId', whereIn: lote)
+              .get();
+
+          for (var doc in actividadesSnapshot.docs) {
+            Map<String, dynamic> actividad = doc.data() as Map<String, dynamic>;
+            actividad['id'] = doc.id;
+
+            // Obtener nombre del huerto
+            String huertoId = actividad['huertoId'];
+            DocumentSnapshot huertoDoc = await _firestore
+                .collection('huertos')
+                .doc(huertoId)
+                .get();
+            
+            if (huertoDoc.exists) {
+              actividad['huertoNombre'] =
+                  (huertoDoc.data() as Map<String, dynamic>)['nombre'];
+            }
+
+            // Calcular progreso de la actividad
+            List<dynamic> participantes = actividad['participantes'] ?? [];
+            if (participantes.isNotEmpty) {
+              int completadas = participantes.where((p) => p['estado'] == 'completada').length;
+              int total = participantes.length;
+              actividad['progreso'] = '$completadas/$total voluntarios';
+            } else {
+              actividad['progreso'] = 'Sin voluntarios';
+            }
+
+            actividadesList.add(actividad);
+          }
         }
 
-        actividadesList.add(actividad);
-      }
-    }
+        // Ordenar por fecha
+        actividadesList.sort((a, b) {
+          if (a['fecha'] == null || b['fecha'] == null) return 0;
+          return a['fecha'].compareTo(b['fecha']);
+        });
 
-    _actividadesPendientes = actividadesList;
+        // Limitar a 10
+        if (actividadesList.length > 10) {
+          actividadesList = actividadesList.sublist(0, 10);
+        }
+      }
+
+      _actividadesPendientes = actividadesList;
+    } catch (e) {
+      print('Error al cargar actividades admin: $e');
+      _actividadesPendientes = [];
+    }
   }
 
   //Cargar actividades para Voluntario
@@ -10961,15 +11188,17 @@ class _HomeScreenState extends State<HomeScreen> {
                     : 'Busca y únete',
                 style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
               ),
-              onTap: () {
+              onTap: () async {
                 Navigator.pop(context);
-                Navigator.push(
+                await Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) =>
                         HuertosScreen(userData: widget.userData),
                   ),
                 );
+                //Recargar actividades al regresar
+                _cargarActividadesPendientes();
               },
             ),
             ListTile(
@@ -10984,34 +11213,38 @@ class _HomeScreenState extends State<HomeScreen> {
                         EstadisticasScreen(userData: widget.userData),
                   ),
                 );
+                _cargarActividadesPendientes();
               },
             ),
             ListTile(
               leading: const Icon(Icons.school, color: Colors.green),
               title: const Text('Educación'),
-              onTap: () {
+              onTap: () async {
                 Navigator.pop(context);
-                Navigator.push(
+                await Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) =>
-                        EducacionScreen(userData: widget.userData),
+                    builder: (context) => EducacionScreen(userData: widget.userData),
                   ),
                 );
+                //Recargar actividades al regresar
+                _cargarActividadesPendientes();
               },
             ),
             ListTile(
               leading: const Icon(Icons.person, color: Colors.green),
               title: const Text('Perfil'),
-              onTap: () {
+              onTap: () async {
                 Navigator.pop(context);
-                Navigator.push(
+                await Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) =>
                         PerfilScreen(userData: widget.userData),
                   ),
                 );
+                //Recargar actividades al regresar
+                _cargarActividadesPendientes();
               },
             ),
             const Divider(),
@@ -11378,6 +11611,27 @@ class _HomeScreenState extends State<HomeScreen> {
                         ],
                       ),
                     ],
+
+                    if (tipoUsuario == 'Administrador' && actividad['progreso'] != null) ...[
+                      const SizedBox(height: 4),
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.people,
+                            size: 14,
+                            color: Colors.grey.shade600,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            actividad['progreso'],
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey.shade600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ],
                 ),
               ),
@@ -11415,7 +11669,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
           ),
 
-          // Botones de acción solo para voluntarios con actividades pendientes
+          //Botones de acción solo para voluntarios con actividades pendientes
           if (tipoUsuario == 'Voluntario' && miEstado == 'pendiente') ...[
             const SizedBox(height: 12),
             const Divider(),
@@ -11476,7 +11730,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // Método para cambiar el estado de una actividad (Voluntario)
+  //Método para cambiar el estado de una actividad (Voluntario)
   Future<void> _cambiarEstadoActividad(
     Map<String, dynamic> actividad,
     String nuevoEstado,
@@ -11484,7 +11738,7 @@ class _HomeScreenState extends State<HomeScreen> {
     String uid = widget.userData['uid'];
     String actividadId = actividad['id'];
 
-    // Confirmar acción
+    //Confirmar acción
     bool? confirmar = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -11521,7 +11775,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     if (confirmar != true) return;
 
-    // Mostrar loading
+    //Mostrar loading
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -11529,7 +11783,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
 
     try {
-      // Obtener la actividad actualizada
+      //Obtener la actividad actualizada
       DocumentSnapshot actividadDoc = await _firestore
           .collection('actividades')
           .doc(actividadId)
@@ -11539,7 +11793,7 @@ class _HomeScreenState extends State<HomeScreen> {
           actividadDoc.data() as Map<String, dynamic>;
       List<dynamic> participantes = actividadData['participantes'] ?? [];
 
-      // Encontrar y actualizar el participante
+      //Encontrar y actualizar el participante
       for (int i = 0; i < participantes.length; i++) {
         if (participantes[i]['uid'] == uid) {
           participantes[i]['estado'] = nuevoEstado;
@@ -11549,7 +11803,7 @@ class _HomeScreenState extends State<HomeScreen> {
         }
       }
 
-      // Si se marca como completada, agregar al historial del usuario
+      //Si se marca como completada, agregar al historial del usuario
       if (nuevoEstado == 'completada') {
         await _firestore.collection('usuarios').doc(uid).update({
           'actividadesCompletadas': FieldValue.arrayUnion([
@@ -11565,13 +11819,13 @@ class _HomeScreenState extends State<HomeScreen> {
         });
       }
 
-      // Verificar si TODOS los participantes completaron o fallaron
+      //Verificar si todos los participantes completaron o fallaron
       bool todosCompletaron = participantes.every(
         (p) => p['estado'] == 'completada' || p['estado'] == 'fallida',
       );
 
       if (todosCompletaron) {
-        // Archivar la actividad (moverla a otra colección)
+        //Archivar la actividad (moverla a otra colección)
         await _firestore.collection('actividades_archivadas').doc(actividadId).set({
           ...actividadData,
           'participantes': participantes,
