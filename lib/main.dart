@@ -444,7 +444,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.grey.withOpacity(0.2),
+                        color: Colors.grey.withValues(alpha:0.2),
                         blurRadius: 10,
                         offset: const Offset(0, 5),
                       ),
@@ -900,7 +900,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     borderRadius: BorderRadius.circular(16),  // ← CAMBIADO
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.grey.withOpacity(0.2),
+                        color: Colors.grey.withValues(alpha:0.3),
                         blurRadius: 10,
                         offset: const Offset(0, 5),
                       ),
@@ -1408,7 +1408,7 @@ class _EstadisticasScreenState extends State<EstadisticasScreen> {
                             borderRadius: BorderRadius.circular(16),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.grey.withOpacity(0.2),
+                                color: Colors.grey.withValues(alpha:0.2),
                                 blurRadius: 10,
                                 offset: const Offset(0, 5),
                               ),
@@ -2100,7 +2100,7 @@ class EducacionScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.grey.withOpacity(0.2),
+                        color: Colors.grey.withValues(alpha:0.2),
                         blurRadius: 10,
                         offset: const Offset(0, 5),
                       ),
@@ -4783,7 +4783,7 @@ Widget _buildActividadesPublicadasAdmin(Map<String, dynamic> userData) {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha:0.1),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -5194,7 +5194,7 @@ class _HuertosScreenState extends State<HuertosScreen> {
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.grey.withOpacity(0.2),
+                        color: Colors.grey.withValues(alpha:0.2),
                         blurRadius: 10,
                         offset: const Offset(0, 5),
                       ),
@@ -5327,7 +5327,7 @@ class _HuertosScreenState extends State<HuertosScreen> {
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.grey.withOpacity(0.2),
+                        color: Colors.grey.withValues(alpha:0.2),
                         blurRadius: 10,
                         offset: const Offset(0, 5),
                       ),
@@ -11481,7 +11481,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   ) {
     String tipo = actividad['tipo'] ?? 'Sin tipo';
     String huertoNombre = actividad['huertoNombre'] ?? 'Sin huerto';
-    String descripcion = actividad['descripcion'] ?? '';
     String miEstado = actividad['miEstado'] ?? 'pendiente';
     double misHoras = (actividad['misHoras'] ?? 0).toDouble();
 
